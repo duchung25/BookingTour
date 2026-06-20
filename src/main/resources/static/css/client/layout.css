@@ -1,9 +1,3 @@
-/* ============================================================
-   TRAVELER — TROPICAL LUXE DESIGN SYSTEM
-   Premium travel booking aesthetic
-   ============================================================ */
-
-/* ---------- CSS Custom Properties ---------- */
 :root {
     --color-ocean: #0B3D5E;
     --color-ocean-deep: #072A42;
@@ -311,7 +305,6 @@ h1, h2, h3, h4, h5, .display-1, .display-2, .display-3, .display-4, .display-5, 
     color: var(--color-text);
 }
 
-/* ---------- Auth Pages ---------- */
 .auth-wrapper {
     min-height: 100vh;
     display: flex;
@@ -338,7 +331,6 @@ h1, h2, h3, h4, h5, .display-1, .display-2, .display-3, .display-4, .display-5, 
     box-shadow: var(--shadow-lg);
 }
 
-/* ---------- Footer ---------- */
 .client-footer {
     background: linear-gradient(180deg, var(--color-ocean-deep) 0%, #051E30 100%);
     position: relative;
@@ -362,7 +354,6 @@ h1, h2, h3, h4, h5, .display-1, .display-2, .display-3, .display-4, .display-5, 
     font-size: 1.4rem;
 }
 
-/* ---------- Buttons ---------- */
 .btn-primary-luxe {
     background: linear-gradient(135deg, var(--color-amber), var(--color-coral));
     border: none;
@@ -394,7 +385,6 @@ h1, h2, h3, h4, h5, .display-1, .display-2, .display-3, .display-4, .display-5, 
     color: #fff;
 }
 
-/* ---------- Scroll Reveal ---------- */
 .reveal {
     opacity: 0;
     transform: translateY(30px);
@@ -410,7 +400,6 @@ h1, h2, h3, h4, h5, .display-1, .display-2, .display-3, .display-4, .display-5, 
 .reveal-delay-3 { transition-delay: 0.3s; }
 .reveal-delay-4 { transition-delay: 0.4s; }
 
-/* ---------- Badge Styles ---------- */
 .badge-hot {
     background: linear-gradient(135deg, #E8634A, #DC2626);
     color: #fff;
@@ -446,7 +435,6 @@ h1, h2, h3, h4, h5, .display-1, .display-2, .display-3, .display-4, .display-5, 
     border-radius: var(--radius-full);
 }
 
-/* ---------- Page Header (Breadcrumb) ---------- */
 .page-header-luxe {
     background: linear-gradient(135deg, var(--color-ocean-deep), var(--color-ocean), var(--color-ocean-light));
     padding: 40px 0 35px;
@@ -472,7 +460,6 @@ h1, h2, h3, h4, h5, .display-1, .display-2, .display-3, .display-4, .display-5, 
     color: rgba(255,255,255,0.9);
 }
 
-/* ---------- Glass Card ---------- */
 .glass-card {
     background: rgba(255, 255, 255, 0.8);
     backdrop-filter: blur(12px);
@@ -482,7 +469,6 @@ h1, h2, h3, h4, h5, .display-1, .display-2, .display-3, .display-4, .display-5, 
     box-shadow: var(--shadow-card);
 }
 
-/* ---------- Review Cards ---------- */
 .review-avatar {
     width: 50px; height: 50px;
     border-radius: 50%;
@@ -494,7 +480,6 @@ h1, h2, h3, h4, h5, .display-1, .display-2, .display-3, .display-4, .display-5, 
     flex-shrink: 0;
 }
 
-/* ---------- Responsive ---------- */
 @media (max-width: 768px) {
     .section-padding { padding: 50px 0; }
     .section-title { font-size: 1.7rem; }
