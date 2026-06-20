@@ -3,7 +3,7 @@
 <div th:fragment="searchform" class="search-glass">
     <form class="row g-3 align-items-end">
         <div class="col-md-3">
-            <label class="form-label fw-semibold small" style="color:var(--color-text-muted);">📍 Điểm đến</label>
+            <label class="form-label fw-semibold small" style="color:var(--color-text-muted);"><i class="fa-solid fa-map-pin" style="color: red;"></i> Điểm đến</label>
             <select class="form-select">
                 <option selected>Tất cả điểm đến</option>
                 <option>Đà Nẵng – Hội An</option>
@@ -16,11 +16,11 @@
             </select>
         </div>
         <div class="col-md-3">
-            <label class="form-label fw-semibold small" style="color:var(--color-text-muted);">📅 Ngày khởi hành</label>
+            <label class="form-label fw-semibold small" style="color:var(--color-text-muted);"><i class="fa-regular fa-calendar-days " style="color: rgba(0, 0, 255, 0.695);"></i> Ngày khởi hành</label>
             <input type="date" class="form-control">
         </div>
         <div class="col-md-2">
-            <label class="form-label fw-semibold small" style="color:var(--color-text-muted);">⏱️ Thời gian</label>
+            <label class="form-label fw-semibold small" style="color:var(--color-text-muted);"><i class="fa-regular fa-clock" style="color: green;"></i> Thời gian</label>
             <select class="form-select">
                 <option selected>Tất cả</option>
                 <option>1-2 ngày</option>
@@ -30,7 +30,7 @@
             </select>
         </div>
         <div class="col-md-2">
-            <label class="form-label fw-semibold small" style="color:var(--color-text-muted);">💰 Ngân sách</label>
+            <label class="form-label fw-semibold small" style="color:var(--color-text-muted);"><i class="fa-solid fa-coins" style="color: gold;"></i> Ngân sách</label>
             <select class="form-select">
                 <option selected>Tất cả</option>
                 <option>Dưới 3 triệu</option>
@@ -40,7 +40,7 @@
             </select>
         </div>
         <div class="col-md-2">
-            <button type="submit" class="btn btn-search-tour w-100">🔍 Tìm tour</button>
+            <button type="submit" class="btn btn-search-tour w-100"><i class="fa-solid fa-magnifying-glass"></i> Tìm tour</button>
         </div>
     </form>
 </div>
