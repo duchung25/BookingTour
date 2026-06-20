@@ -13,7 +13,7 @@
 <section class="section-padding">
     <div class="container">
         <div class="text-center mb-5 reveal">
-            <span class="section-tag">🔥 Nổi bật</span>
+            <span class="section-tag"><i class="fa-solid fa-fire" style="color: orange;"></i> Nổi bật</span>
             <h2 class="section-title">Tour Du Lịch Được Yêu Thích Nhất</h2>
             <p class="section-subtitle">Khám phá các tour du lịch được đánh giá cao nhất từ hàng nghìn du khách</p>
         </div>
@@ -22,9 +22,11 @@
                  th:classappend="'reveal-delay-' + ${iterStat.count}">
                 <div class="card h-100 border-0 overflow-hidden tour-card-item">
                     <div class="position-relative overflow-hidden">
-                        <img th:if="${!tour.images.isEmpty()}"
-                             th:src="@{${tour.images[0].imageUrl}}"
-                             class="card-img-top" th:alt="${tour.name}" style="height:220px;object-fit:cover;">
+                        <a th:if="${!tour.images.isEmpty()}"
+                             th:href="@{/tours/detail(id=${tour.id})}">
+                            <img th:src="@{${tour.images[0].imageUrl}}"
+                                 class="card-img-top" th:alt="${tour.name}" style="height:220px;object-fit:cover;">
+                        </a>
                         <img th:if="${tour.images.isEmpty()}"
                              th:src="@{/img/tour-phuquoc.png}"
                              class="card-img-top" th:alt="${tour.name}" style="height:220px;object-fit:cover;">
@@ -38,13 +40,16 @@
                     <div class="card-body d-flex flex-column">
                         <div class="d-flex align-items-center gap-2 mb-2 small" style="color:var(--color-text-muted);">
                             <span style="color:var(--color-amber);font-weight:700;"
-                                  th:text="'★ ' + ${#numbers.formatDecimal(tour.averageRating, 1, 1)}">★ 4.9</span>
+                                  th:text="'★ ' + ${#numbers.formatDecimal(tour.averageRating, 1, 1)}"><i class="fa-solid fa-star" style="color: var(--color-amber);"></i> 4.9</span>
                             <span>•</span>
                             <span th:text="${tour.visibleReviewCount} + ' đánh giá'">0 đánh giá</span>
                         </div>
-                        <h6 class="card-title fw-bold" th:text="${tour.name}">Tên tour</h6>
+                        <a class="card-title fw-bold text-decoration-none" 
+                            th:text="${tour.name}"
+                            th:href="@{/tours/detail(id=${tour.id})}"
+                        >Tên tour</a>
                         <p class="small mb-2" style="color:var(--color-text-muted);">
-                            📍 <span th:text="${tour.destination.name}">Điểm đến</span>
+                            <i class="fa-solid fa-map-pin" style="color: red;"></i> <span th:text="${tour.destination.name}">Điểm đến</span>
                         </p>
                         <div class="mt-auto d-flex justify-content-between align-items-end">
                             <div th:if="${!tour.departures.isEmpty()}">
@@ -56,23 +61,22 @@
                             <div th:if="${tour.departures.isEmpty()}">
                                 <div class="price-current">Liên hệ</div>
                             </div>
-                            <a th:href="@{/tours/detail(id=${tour.id})}" class="btn btn-view-tour">Xem →</a>
+                            <a th:href="@{/tours/detail(id=${tour.id})}" class="btn btn-view-tour">Xem <i class="fa-solid fa-arrow-right"></i></a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
         <div class="text-center mt-5 reveal">
-            <a th:href="@{/tours}" class="btn btn-outline-luxe px-5" style="color:var(--color-ocean);border-color:var(--color-ocean);">Xem tất cả tour →</a>
+            <a th:href="@{/tours}" class="btn btn-outline-luxe px-5" style="color:var(--color-ocean);border-color:var(--color-ocean);">Xem tất cả tour <i class="fa-solid fa-arrow-right"></i></a>
         </div>
     </div>
 </section>
 
-<!-- Điểm Đến Phổ Biến -->
 <section class="section-padding bg-sand">
     <div class="container">
         <div class="text-center mb-5 reveal">
-            <span class="section-tag">📍 Điểm đến</span>
+            <span class="section-tag"> <i class="fa-solid fa-map-pin" style="color: red;"></i> Điểm đến</span>
             <h2 class="section-title">Điểm Đến Phổ Biến Nhất</h2>
             <p class="section-subtitle">Những địa danh du lịch hấp dẫn nhất Việt Nam đang chờ bạn khám phá</p>
         </div>
@@ -98,38 +102,37 @@
     </div>
 </section>
 
-<!-- Tại Sao Chọn Traveler -->
 <section class="section-padding">
     <div class="container">
         <div class="text-center mb-5 reveal">
-            <span class="section-tag">💎 Vì sao chọn chúng tôi</span>
+            <span class="section-tag"><i class="fa-solid fa-gem" style="color: rgba(0, 157, 255, 0.741);"></i> Vì sao chọn chúng tôi</span>
             <h2 class="section-title">Traveler — Đối Tác Du Lịch Đáng Tin Cậy</h2>
         </div>
         <div class="row g-4">
             <div class="col-md-6 col-lg-3 reveal reveal-delay-1">
                 <div class="category-card h-100">
-                    <div class="category-icon">🛡️</div>
+                    <div class="category-icon"><i class="fa-solid fa-shield"></i></div>
                     <h6 class="fw-bold" style="color:var(--color-ocean);">Đảm Bảo Giá Tốt</h6>
                     <p class="small mb-0" style="color:var(--color-text-muted);">Cam kết hoàn tiền nếu tìm thấy giá thấp hơn cho cùng dịch vụ</p>
                 </div>
             </div>
             <div class="col-md-6 col-lg-3 reveal reveal-delay-2">
                 <div class="category-card h-100">
-                    <div class="category-icon">⭐</div>
+                    <div class="category-icon"><i class="fa-solid fa-star"></i></div>
                     <h6 class="fw-bold" style="color:var(--color-ocean);">Dịch Vụ 5 Sao</h6>
                     <p class="small mb-0" style="color:var(--color-text-muted);">Đội ngũ chuyên nghiệp, hỗ trợ 24/7 trong suốt hành trình</p>
                 </div>
             </div>
             <div class="col-md-6 col-lg-3 reveal reveal-delay-3">
                 <div class="category-card h-100">
-                    <div class="category-icon">🔒</div>
+                    <div class="category-icon"><i class="fa-solid fa-lock"></i></div>
                     <h6 class="fw-bold" style="color:var(--color-ocean);">Thanh Toán An Toàn</h6>
                     <p class="small mb-0" style="color:var(--color-text-muted);">Bảo mật thông tin thanh toán với công nghệ mã hóa tiên tiến</p>
                 </div>
             </div>
             <div class="col-md-6 col-lg-3 reveal reveal-delay-4">
                 <div class="category-card h-100">
-                    <div class="category-icon">🎯</div>
+                    <div class="category-icon"><i class="fa-solid fa-bullseye"></i></div>
                     <h6 class="fw-bold" style="color:var(--color-ocean);">Lịch Trình Tối Ưu</h6>
                     <p class="small mb-0" style="color:var(--color-text-muted);">Được thiết kế bởi chuyên gia, tối ưu trải nghiệm mỗi phút</p>
                 </div>
@@ -162,7 +165,7 @@
                     <div class="card-body">
                         <h6 class="card-title fw-bold" th:text="${tour.name}">Tên tour</h6>
                         <p class="small" style="color:var(--color-text-muted);">
-                            📍 <span th:text="${tour.destination.name}">Điểm đến</span> ·
+                            <i class="fa-solid fa-map-pin" style="color: red;"></i> <span th:text="${tour.destination.name}">Điểm đến</span> ·
                             <span th:text="${tour.durationDays + 'N' + tour.durationNights + 'Đ'}">3N2Đ</span> ·
                             <span th:text="'★ ' + ${#numbers.formatDecimal(tour.averageRating, 1, 1)}">★ 4.7</span>
                         </p>
@@ -183,7 +186,7 @@
 <section class="section-padding">
     <div class="container">
         <div class="text-center mb-5 reveal">
-            <span class="section-tag">💬 Phản hồi</span>
+            <span class="section-tag"><i class="fa-solid fa-comments" style="color: var(--color-ocean);"></i> Phản hồi</span>
             <h2 class="section-title">Khách Hàng Nói Gì Về Chúng Tôi</h2>
         </div>
         <div class="row g-4">
@@ -202,8 +205,8 @@
                     </div>
                     <div style="color:var(--color-amber);" class="mb-2">
                         <th:block th:each="i : ${#numbers.sequence(1, 5)}">
-                            <span th:if="${i <= review.rating}">★</span>
-                            <span th:if="${i > review.rating}" style="opacity:0.3;">☆</span>
+                            <span th:if="${i <= review.rating}"><i class="fa-solid fa-star"></i></span>
+                            <span th:if="${i > review.rating}" style="opacity:0.3;"><i class="fa-solid fa-star"></i></span>
                         </th:block>
                     </div>
                     <p class="small mb-0" style="color:var(--color-text-muted);"
