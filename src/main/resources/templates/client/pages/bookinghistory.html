@@ -5,28 +5,48 @@
 <div th:replace="~{client/fragments/header :: header}"></div>
 <div th:replace="~{client/fragments/navbar :: navbar}"></div>
 
+<!-- Header Page Title -->
+<section class="page-header-luxe text-white text-center" style="padding: 40px 0;">
+    <div class="container position-relative" style="z-index: 1;">
+        <h2 class="fw-bold display-6 mb-2" style="color: #fff;">
+            <i class="fa-solid fa-clock-rotate-left me-2" style="color: var(--color-amber-light);"></i> Lịch Sử Đặt Tour
+        </h2>
+        <p class="lead mb-0" style="color: rgba(255,255,255,0.85); font-size: 1rem;">Quản lý và theo dõi thông tin hành trình của bạn</p>
+    </div>
+</section>
+
 <section class="py-5">
     <div class="container">
-        <h3 class="fw-bold mb-4">📋 Lịch Sử Đặt Tour</h3>
+        <!-- Breadcrumb Navigation -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a th:href="@{/}" class="text-decoration-none" style="color: var(--color-ocean);"><i class="fa-solid fa-house me-1"></i> Trang chủ</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Lịch sử đặt tour</li>
+            </ol>
+        </nav>
 
         <!-- Success/Error messages -->
-        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show rounded-3 shadow-sm d-flex align-items-center gap-2" role="alert">
+            <i class="fa-solid fa-circle-check text-success fs-5"></i>
             <span th:text="${successMessage}"></span>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
-        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show rounded-3 shadow-sm d-flex align-items-center gap-2" role="alert">
+            <i class="fa-solid fa-circle-exclamation text-danger fs-5"></i>
             <span th:text="${errorMessage}"></span>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
 
-        <!-- Filter -->
-        <div class="card border-0 shadow-sm rounded-4 p-3 mb-4">
+        <!-- Filter Form -->
+        <div class="glass-card p-4 mb-4">
             <form th:action="@{/booking/history}" method="get">
-                <div class="row g-2 align-items-end">
+                <div class="row g-3 align-items-end">
                     <div class="col-md-4">
-                        <label class="form-label small fw-semibold">Trạng thái</label>
+                        <label class="form-label small fw-bold" style="color: var(--color-ocean);">
+                            <i class="fa-solid fa-filter text-muted me-1"></i> Lọc theo trạng thái
+                        </label>
                         <select class="form-select form-select-sm" name="status">
-                            <option value="">Tất cả</option>
+                            <option value="">Tất cả trạng thái</option>
                             <option value="PENDING" th:selected="${status == 'PENDING'}">Chờ xác nhận</option>
                             <option value="CONFIRMED" th:selected="${status == 'CONFIRMED'}">Đã xác nhận</option>
                             <option value="COMPLETED" th:selected="${status == 'COMPLETED'}">Đã hoàn thành</option>
@@ -34,112 +54,159 @@
                         </select>
                     </div>
                     <div class="col-md-2">
-                        <button type="submit" class="btn btn-primary btn-sm w-100 py-2 mb-1 rounded-pill">Lọc</button>
+                        <button type="submit" class="btn btn-primary btn-sm w-100 py-2">
+                            <i class="fa-solid fa-magnifying-glass"></i> Lọc đơn đặt
+                        </button>
                     </div>
                 </div>
             </form>
         </div>
 
-        <div th:if="${bookingPage.totalElements == 0}" class="text-center py-5">
-            <p class="text-muted fs-5">Bạn chưa có đơn đặt tour nào.</p>
-            <a th:href="@{/tours}" class="btn btn-primary">Khám phá tour →</a>
+        <!-- Empty Booking History -->
+        <div th:if="${bookingPage.totalElements == 0}" class="glass-card text-center py-5 shadow-sm">
+            <div class="mb-3" style="font-size: 3.5rem; color: var(--color-text-light);">
+                <i class="fa-solid fa-folder-open"></i>
+            </div>
+            <p class="text-muted fs-5 mb-4">Bạn chưa có đơn đặt tour nào trong lịch sử.</p>
+            <a th:href="@{/tours}" class="btn btn-primary-luxe px-4 py-2 text-decoration-none">
+                <i class="fa-solid fa-compass me-1"></i> Khám phá tour ngay
+            </a>
         </div>
 
-        <div class="table-responsive" th:if="${bookingPage.totalElements > 0}">
-            <table class="table table-hover align-middle">
-                <thead class="table-light">
-                    <tr>
-                        <th>Mã đơn</th>
-                        <th>Tour</th>
-                        <th>Ngày khởi hành</th>
-                        <th>Số khách</th>
-                        <th>Tổng tiền</th>
-                        <th>Trạng thái</th>
-                        <th>Hành động</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="booking : ${bookingPage.content}">
-                        <td><strong th:text="${booking.bookingCode}">BK-XXX</strong></td>
-                        <td>
-                            <div class="d-flex align-items-center gap-2">
-                                <img th:if="${!booking.tourDeparture.tour.images.isEmpty()}"
-                                     th:src="@{${booking.tourDeparture.tour.images[0].imageUrl}}"
-                                     class="rounded" alt="tour"
-                                     style="width:50px;height:35px;object-fit:cover;">
-                                <img th:if="${booking.tourDeparture.tour.images.isEmpty()}"
-                                     th:src="@{/img/tour-phuquoc.png}"
-                                     class="rounded" alt="tour"
-                                     style="width:50px;height:35px;object-fit:cover;">
-                                <a th:href="@{/tours/detail(id=${booking.tourDeparture.tour.id})}"
-                                   class="fw-semibold small text-decoration-none"
-                                   th:text="${booking.tourDeparture.tour.name}">Tên tour</a>
-                            </div>
-                        </td>
-                        <td th:text="${#temporals.format(booking.tourDeparture.departureDate, 'dd/MM/yyyy')}">15/04/2026</td>
-                        <td th:text="${booking.totalPeople + ' khách'}">3 khách</td>
-                        <td>
-                            <!-- Cancelled → strikethrough -->
-                            <span th:if="${booking.bookingStatus == 'CANCELLED'}" class="fw-bold text-muted">
-                                <del th:text="${#numbers.formatDecimal(booking.finalAmount, 0, 'COMMA', 0, 'POINT') + 'đ'}">0đ</del>
-                            </span>
-                            <span th:if="${booking.bookingStatus != 'CANCELLED'}" class="fw-bold text-primary"
-                                  th:text="${#numbers.formatDecimal(booking.finalAmount, 0, 'COMMA', 0, 'POINT') + 'đ'}">0đ</span>
-                        </td>
-                        <td>
-                            <span th:if="${booking.bookingStatus == 'PENDING'}"
-                                  class="badge bg-warning text-dark rounded-pill">Chờ xác nhận</span>
-                            <span th:if="${booking.bookingStatus == 'CONFIRMED'}"
-                                  class="badge bg-success rounded-pill">Đã xác nhận</span>
-                            <span th:if="${booking.bookingStatus == 'COMPLETED'}"
-                                  class="badge bg-info text-dark rounded-pill">Đã hoàn thành</span>
-                            <span th:if="${booking.bookingStatus == 'CANCELLED'}"
-                                  class="badge bg-danger rounded-pill">Đã hủy</span>
-                        </td>
-                        <td>
-                            <div class="btn-group btn-group-sm">
-                                <a th:href="@{/booking/detail(id=${booking.id})}"
-                                   class="btn btn-outline-primary">Chi tiết</a>
-                                <a th:if="${(booking.bookingStatus == 'PENDING' or booking.bookingStatus == 'CONFIRMED') and booking.paymentStatus != 'PAID'}"
-                                   th:href="@{/payment(bookingId=${booking.id})}"
-                                   class="btn btn-outline-success">Thanh toán</a>
-                                <a th:if="${booking.bookingStatus == 'PENDING'}"
-                                   th:href="@{/booking/edit(id=${booking.id})}"
-                                   class="btn btn-outline-secondary">Sửa</a>
-                                <a th:if="${booking.bookingStatus == 'PENDING' or booking.bookingStatus == 'CONFIRMED'}"
-                                   th:href="@{/booking/cancel(id=${booking.id})}"
-                                   class="btn btn-outline-danger">Hủy</a>
-                                <a th:if="${booking.bookingStatus == 'COMPLETED'}"
-                                   th:href="@{/review/create(bookingId=${booking.id})}"
-                                   class="btn btn-outline-warning">Đánh giá</a>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+        <!-- Bookings List/Table -->
+        <div class="glass-card p-0 overflow-hidden" th:if="${bookingPage.totalElements > 0}">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr style="background: rgba(11, 61, 94, 0.05); color: var(--color-ocean);">
+                            <th class="ps-4 py-3">Mã đơn</th>
+                            <th class="py-3">Tour du lịch</th>
+                            <th class="py-3">Ngày khởi hành</th>
+                            <th class="py-3 text-center">Số khách</th>
+                            <th class="py-3 text-end">Tổng tiền</th>
+                            <th class="py-3 text-center">Trạng thái</th>
+                            <th class="pe-4 py-3 text-end">Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="booking : ${bookingPage.content}">
+                            <td class="ps-4">
+                                <span class="badge bg-light text-dark border border-secondary-subtle px-2 py-1.5 font-monospace fw-bold" th:text="${booking.bookingCode}">BK-XXX</span>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center gap-3">
+                                    <img th:if="${!booking.tourDeparture.tour.images.isEmpty()}"
+                                         th:src="@{${booking.tourDeparture.tour.images[0].imageUrl}}"
+                                         class="rounded-3 shadow-sm border" alt="tour"
+                                         style="width: 70px; height: 48px; object-fit: cover;">
+                                    <img th:if="${booking.tourDeparture.tour.images.isEmpty()}"
+                                         th:src="@{/img/tour-phuquoc.png}"
+                                         class="rounded-3 shadow-sm border" alt="tour"
+                                         style="width: 70px; height: 48px; object-fit: cover;">
+                                    <div>
+                                        <a th:href="@{/tours/detail(id=${booking.tourDeparture.tour.id})}"
+                                           class="fw-bold text-decoration-none text-dark hover-ocean small"
+                                           th:text="${booking.tourDeparture.tour.name}">Tên tour</a>
+                                        <div class="small text-muted mt-0.5">
+                                            <i class="fa-solid fa-location-dot text-danger me-1"></i> <span th:text="${booking.tourDeparture.tour.destination.name}">Điểm đến</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td th:text="${#temporals.format(booking.tourDeparture.departureDate, 'dd/MM/yyyy')}">15/04/2026</td>
+                            <td class="text-center">
+                                <span class="badge bg-light text-dark rounded-pill px-2.5 py-1.5" th:text="${booking.totalPeople + ' khách'}">3 khách</span>
+                            </td>
+                            <td class="text-end">
+                                <!-- Cancelled → strikethrough -->
+                                <span th:if="${booking.bookingStatus == 'CANCELLED'}" class="fw-bold text-muted">
+                                    <del th:text="${#numbers.formatDecimal(booking.finalAmount, 0, 'COMMA', 0, 'POINT') + 'đ'}">0đ</del>
+                                </span>
+                                <span th:if="${booking.bookingStatus != 'CANCELLED'}" class="fw-bold text-primary fs-6"
+                                      th:text="${#numbers.formatDecimal(booking.finalAmount, 0, 'COMMA', 0, 'POINT') + 'đ'}">0đ</span>
+                            </td>
+                            <td class="text-center">
+                                <span th:if="${booking.bookingStatus == 'PENDING'}"
+                                      class="badge bg-warning text-dark rounded-pill px-3 py-1.5 small shadow-sm">Chờ xác nhận
+                                </span>
+                                <span th:if="${booking.bookingStatus == 'CONFIRMED'}"
+                                      class="badge bg-success text-white rounded-pill px-3 py-1.5 small shadow-sm">Đã xác nhận
+                                </span>
+                                <span th:if="${booking.bookingStatus == 'COMPLETED'}"
+                                      class="badge bg-info text-white rounded-pill px-3 py-1.5 small shadow-sm">Đã hoàn thành
+                                </span>
+                                <span th:if="${booking.bookingStatus == 'CANCELLED'}"
+                                      class="badge bg-danger text-white rounded-pill px-3 py-1.5 small shadow-sm">Đã hủy
+                                </span>
+                            </td>
+                            <td class="pe-4 text-end">
+                                <div class="d-inline-flex gap-2">
+                                    <a th:href="@{/booking/detail(id=${booking.id})}"
+                                       class="btn btn-outline-primary btn-sm px-2.5 py-1.5" title="Chi tiết">Chi tiết
+                                    </a>
+                                    <a th:if="${(booking.bookingStatus == 'PENDING' or booking.bookingStatus == 'CONFIRMED') and booking.paymentStatus != 'PAID'}"
+                                       th:href="@{/payment(bookingId=${booking.id})}"
+                                       class="btn btn-success btn-sm px-2.5 py-1.5" title="Thanh toán">Thanh toán
+                                    </a>
+                                    <a th:if="${booking.bookingStatus == 'PENDING'}"
+                                       th:href="@{/booking/edit(id=${booking.id})}"
+                                       class="btn btn-outline-secondary btn-sm px-2.5 py-1.5" title="Sửa">
+                                        <i class="fa-solid fa-pen-to-square"></i> Sửa
+                                    </a>
+                                    <a th:if="${booking.bookingStatus == 'PENDING' or booking.bookingStatus == 'CONFIRMED'}"
+                                       th:href="@{/booking/cancel(id=${booking.id})}"
+                                       class="btn btn-outline-danger btn-sm px-2.5 py-1.5" title="Hủy">
+                                        <i class="fa-solid fa-trash-can"></i> Hủy
+                                    </a>
+                                    <a th:if="${booking.bookingStatus == 'COMPLETED'}"
+                                       th:href="@{/review/create(bookingId=${booking.id})}"
+                                       class="btn btn-warning btn-sm px-2.5 py-1.5" title="Đánh giá">
+                                        <i class="fa-solid fa-star"></i> Đánh giá
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
 
         <!-- Pagination -->
         <nav aria-label="Phân trang" class="mt-4" th:if="${bookingPage.totalPages > 1}">
             <ul class="pagination justify-content-center">
                 <li class="page-item" th:classappend="${bookingPage.first} ? 'disabled'">
-                    <a class="page-link"
+                    <a class="page-link shadow-sm rounded-circle d-flex align-items-center justify-content-center m-1"
+                       style="width: 38px; height: 38px;"
                        th:href="@{/booking/history(status=${status},page=${bookingPage.number - 1})}"
-                       th:if="${!bookingPage.first}">← Trước</a>
-                    <span class="page-link" th:if="${bookingPage.first}">← Trước</span>
+                       th:if="${!bookingPage.first}">
+                       <i class="fa-solid fa-angle-left"></i>
+                    </a>
+                    <span class="page-link shadow-sm rounded-circle d-flex align-items-center justify-content-center m-1 disabled"
+                          style="width: 38px; height: 38px;"
+                          th:if="${bookingPage.first}">
+                          <i class="fa-solid fa-angle-left"></i>
+                    </span>
                 </li>
                 <th:block th:each="i : ${#numbers.sequence(0, bookingPage.totalPages - 1)}">
                     <li class="page-item" th:classappend="${i == bookingPage.number} ? 'active'">
-                        <a class="page-link"
+                        <a class="page-link shadow-sm rounded-circle d-flex align-items-center justify-content-center m-1"
+                           style="width: 38px; height: 38px;"
                            th:href="@{/booking/history(status=${status},page=${i})}"
                            th:text="${i + 1}">1</a>
                     </li>
                 </th:block>
                 <li class="page-item" th:classappend="${bookingPage.last} ? 'disabled'">
-                    <a class="page-link"
+                    <a class="page-link shadow-sm rounded-circle d-flex align-items-center justify-content-center m-1"
+                       style="width: 38px; height: 38px;"
                        th:href="@{/booking/history(status=${status},page=${bookingPage.number + 1})}"
-                       th:if="${!bookingPage.last}">Sau →</a>
-                    <span class="page-link" th:if="${bookingPage.last}">Sau →</span>
+                       th:if="${!bookingPage.last}">
+                       <i class="fa-solid fa-angle-right"></i>
+                    </a>
+                    <span class="page-link shadow-sm rounded-circle d-flex align-items-center justify-content-center m-1 disabled"
+                          style="width: 38px; height: 38px;"
+                          th:if="${bookingPage.last}">
+                          <i class="fa-solid fa-angle-right"></i>
+                    </span>
                 </li>
             </ul>
         </nav>

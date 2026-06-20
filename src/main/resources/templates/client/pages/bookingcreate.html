@@ -16,7 +16,7 @@
             </ol>
         </nav>
 
-        <h3 class="fw-bold mb-4">🛒 Đặt Tour Du Lịch</h3>
+        <h3 class="fw-bold mb-4"><i class="fa-solid fa-cart-shopping" style="color: rgba(0, 0, 0, 0.484);"></i> Đặt Tour Du Lịch</h3>
 
         <!-- Error/Success messages -->
         <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -31,7 +31,7 @@
                 <!-- Form đặt tour -->
                 <div class="col-lg-8">
                     <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
-                        <h5 class="fw-bold mb-3">👤 Thông tin liên hệ</h5>
+                        <h5 class="fw-bold mb-3"><i class="fa-solid fa-user" style="color: rgba(0, 0, 0, 0.484);"></i> Thông tin liên hệ</h5>
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold">Họ và tên <span class="text-danger">*</span></label>
@@ -49,7 +49,7 @@
                     </div>
 
                     <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
-                        <h5 class="fw-bold mb-3">📅 Thông tin chuyến đi</h5>
+                        <h5 class="fw-bold mb-3"><i class="fa-solid fa-calendar" style="color: rgba(46, 191, 232, 0.484);"></i> Thông tin chuyến đi</h5>
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold">Ngày khởi hành <span class="text-danger">*</span></label>
@@ -82,7 +82,7 @@
                     </div>
 
                     <div class="card border-0 shadow-sm rounded-4 p-4">
-                        <h5 class="fw-bold mb-3">🎫 Mã khuyến mãi</h5>
+                        <h5 class="fw-bold mb-3"><i class="fa-solid fa-ticket" style="color: rgba(255, 217, 0, 0.679);"></i> Mã khuyến mãi</h5>
                         <div class="input-group">
                             <input type="text" class="form-control" th:field="*{promotionCode}" placeholder="Nhập mã khuyến mãi (nếu có)">
                         </div>
@@ -92,7 +92,7 @@
                 <!-- Tóm tắt đơn đặt -->
                 <div class="col-lg-4">
                     <div class="card border-0 shadow rounded-4 p-4 sticky-top" style="top:90px;">
-                        <h5 class="fw-bold mb-3">📋 Tóm tắt đơn đặt</h5>
+                        <h5 class="fw-bold mb-3">Đơn đặt</h5>
                         <div class="d-flex gap-3 mb-3">
                             <img th:if="${!tour.images.isEmpty()}"
                                  th:src="@{${tour.images[0].imageUrl}}"
@@ -123,11 +123,13 @@
                             <span class="text-primary" id="summaryTotal">0đ</span>
                         </div>
                         <button type="submit" class="btn btn-primary btn-lg w-100 fw-semibold mb-2">
-                            Xác nhận đặt tour →
+                            Xác nhận đặt tour <i class="fa-solid fa-arrow-right-long"></i>
                         </button>
-                        <a th:href="@{/tours/detail(id=${tour.id})}" class="btn btn-outline-secondary w-100">← Quay lại tour</a>
+                        <a th:href="@{/tours/detail(id=${tour.id})}" class="btn btn-outline-secondary w-100">
+                            <i class="fa-solid fa-arrow-left"></i> Quay lại tour
+                        </a>
                         <div class="mt-3 small text-muted text-center">
-                            🔒 Thông tin được bảo mật an toàn
+                            <i class="fa-solid fa-lock"></i> Thông tin được bảo mật an toàn
                         </div>
                     </div>
                 </div>

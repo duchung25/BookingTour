@@ -6,16 +6,28 @@
 <div th:replace="~{client/fragments/navbar :: navbar}"></div>
 <section class="page-header-luxe text-white text-center" style="padding:60px 0 55px;">
     <div class="container position-relative" style="z-index:1;">
-        <h1 class="fw-bold display-5" style="color:#fff;">Liên Hệ</h1>
+        <h1 class="fw-bold display-5" style="color:#fff;">
+            <i class="fa-solid fa-envelope-open-text me-2" style="color: var(--color-amber-light);"></i> Liên Hệ
+        </h1>
         <p class="lead" style="color:rgba(255,255,255,0.7);">Chúng tôi luôn sẵn sàng hỗ trợ bạn</p>
     </div>
 </section>
 <section class="py-5">
     <div class="container">
+        <!-- Breadcrumb Navigation -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a th:href="@{/}" class="text-decoration-none" style="color:var(--color-ocean);"><i class="fa-solid fa-house me-1"></i> Trang chủ</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Liên hệ</li>
+            </ol>
+        </nav>
+
         <div class="row g-4">
             <div class="col-lg-4 reveal">
                 <div class="glass-card p-4 h-100">
-                    <h5 class="fw-bold mb-4" style="color:var(--color-ocean);">📞 Thông tin liên hệ</h5>
+                    <h5 class="fw-bold mb-4" style="color:var(--color-ocean);">
+                        <i class="fa-solid fa-phone-volume text-primary me-2"></i> Thông tin liên hệ
+                    </h5>
                     <div class="mb-3">
                         <div class="fw-semibold">Hotline</div>
                         <a href="tel:19001234" class="text-decoration-none fs-5 fw-bold" style="color:var(--color-amber);">1900 1234</a>
@@ -31,17 +43,25 @@
                     </div>
                     <div>
                         <div class="fw-semibold mb-2">Mạng xã hội</div>
-                        <div class="d-flex gap-2">
-                            <a href="#" class="btn btn-sm" style="border:1.5px solid var(--color-ocean);color:var(--color-ocean);border-radius:var(--radius-sm);">📘 Facebook</a>
-                            <a href="#" class="btn btn-sm" style="border:1.5px solid var(--color-coral);color:var(--color-coral);border-radius:var(--radius-sm);">📷 Instagram</a>
-                            <a href="#" class="btn btn-sm" style="border:1.5px solid var(--color-ocean-deep);color:var(--color-ocean-deep);border-radius:var(--radius-sm);">💬 Zalo</a>
+                        <div class="d-flex gap-2 flex-wrap">
+                            <a href="#" class="btn btn-outline-primary btn-sm" style="border-color: #1877F2; color: #1877F2;">
+                                <i class="fa-brands fa-facebook"></i> Facebook
+                            </a>
+                            <a href="#" class="btn btn-outline-danger btn-sm" style="border-color: #E1306C; color: #E1306C;">
+                                <i class="fa-brands fa-instagram"></i> Instagram
+                            </a>
+                            <a href="#" class="btn btn-outline-info btn-sm" style="border-color: #0068FF; color: #0068FF;">
+                                <i class="fa-solid fa-comments"></i> Zalo
+                            </a>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="col-lg-8 reveal reveal-delay-2">
                 <div class="glass-card p-4">
-                    <h5 class="fw-bold mb-3" style="color:var(--color-ocean);">✉️ Gửi tin nhắn</h5>
+                    <h5 class="fw-bold mb-3" style="color:var(--color-ocean);">
+                        <i class="fa-solid fa-paper-plane text-primary me-2"></i> Gửi tin nhắn
+                    </h5>
                     <form>
                         <div class="row g-3">
                             <div class="col-md-6"><label class="form-label fw-semibold">Họ tên</label><input type="text" class="form-control" placeholder="Nguyễn Văn A"></div>
@@ -52,7 +72,9 @@
                             </div>
                             <div class="col-12"><label class="form-label fw-semibold">Nội dung</label><textarea class="form-control" rows="5" placeholder="Nhập nội dung tin nhắn..."></textarea></div>
                         </div>
-                        <button type="submit" class="btn mt-3 px-4" style="background:var(--color-ocean);color:#fff;border-radius:var(--radius-sm);">Gửi tin nhắn</button>
+                        <button type="submit" class="btn btn-primary mt-3 px-4">
+                            <i class="fa-solid fa-paper-plane"></i> Gửi tin nhắn
+                        </button>
                     </form>
                 </div>
             </div>
