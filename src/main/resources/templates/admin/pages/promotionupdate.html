@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head th:replace="~{admin/fragments/head :: head('Cập nhật khuyến mãi', null)}"></head>
+<body>
+<div th:replace="~{admin/fragments/sidebar :: sidebar}"></div>
+<div class="admin-main">
+    <div th:replace="~{admin/fragments/header :: header}"></div>
+    <main class="flex-grow-1 p-4">
+        <div th:replace="~{admin/fragments/breadcrumb :: breadcrumb('Cập nhật khuyến mãi')}"></div>
+        <h4 class="fw-bold mb-4">✏️ Cập Nhật Khuyến Mãi</h4>
+
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${errorMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <div class="card admin-card">
+            <div class="card-body p-4">
+                <form th:action="@{/admin/promotions/update(id=${promotion.id})}" method="post" th:object="${promotionRequest}">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Mã khuyến mãi <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" th:field="*{code}" style="text-transform: uppercase;">
+                            <div th:if="${#fields.hasErrors('code')}" class="text-danger small" th:errors="*{code}"></div>
+                        </div>
+                        <div class="col-md-8">
+                            <label class="form-label fw-semibold">Tên khuyến mãi <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" th:field="*{name}">
+                            <div th:if="${#fields.hasErrors('name')}" class="text-danger small" th:errors="*{name}"></div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Loại giảm giá <span class="text-danger">*</span></label>
+                            <select class="form-select" th:field="*{discountType}">
+                                <option value="PERCENT">Phần trăm (%)</option>
+                                <option value="FIXED">Số tiền cố định (VNĐ)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Giá trị giảm <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" th:field="*{discountValue}" step="0.01" min="0">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Giảm tối đa (VNĐ)</label>
+                            <input type="number" class="form-control" th:field="*{maxDiscountAmount}" step="1000" min="0">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Đơn tối thiểu (VNĐ)</label>
+                            <input type="number" class="form-control" th:field="*{minBookingAmount}" step="1000" min="0">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Ngày bắt đầu <span class="text-danger">*</span></label>
+                            <input type="datetime-local" class="form-control" th:field="*{startDate}">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Ngày kết thúc <span class="text-danger">*</span></label>
+                            <input type="datetime-local" class="form-control" th:field="*{endDate}">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Giới hạn lượt dùng</label>
+                            <input type="number" class="form-control" th:field="*{usageLimit}" min="1">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Trạng thái</label>
+                            <select class="form-select" th:field="*{status}">
+                                <option value="ACTIVE">Đang hoạt động</option>
+                                <option value="INACTIVE">Ngưng hoạt động</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Đã sử dụng</label>
+                            <input type="text" class="form-control" th:value="${promotion.usedCount}" readonly>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">Mô tả</label>
+                            <textarea class="form-control" rows="3" th:field="*{description}"></textarea>
+                        </div>
+                    </div>
+                    <div class="mt-4 d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                        <a th:href="@{/admin/promotions}" class="btn btn-outline-secondary">Hủy</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+    <div th:replace="~{admin/fragments/footer :: footer}"></div>
+</div>
+</body>
+</html>

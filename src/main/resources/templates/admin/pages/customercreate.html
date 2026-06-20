@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head th:replace="~{admin/fragments/head :: head('Thêm khách hàng', null)}"></head>
+<body>
+<div th:replace="~{admin/fragments/sidebar :: sidebar}"></div>
+<div class="admin-main">
+    <div th:replace="~{admin/fragments/header :: header}"></div>
+    <main class="flex-grow-1 p-4">
+        <div th:replace="~{admin/fragments/breadcrumb :: breadcrumb('Thêm khách hàng')}"></div>
+        <h4 class="fw-bold mb-4">👥 Thêm Khách Hàng Mới</h4>
+
+        <!-- Thông báo lỗi -->
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            <span th:text="${errorMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <!-- Thông báo thành công -->
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            <span th:text="${successMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <div class="card admin-card">
+            <div class="card-body p-4">
+                <form th:action="@{/admin/customers/create}" th:object="${registerRequest}" method="post" novalidate>
+                    <div class="row g-3">
+                        <!-- Họ và tên -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold" for="fullName">
+                                Họ và tên <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" class="form-control" id="fullName"
+                                   th:field="*{fullName}"
+                                   th:classappend="${#fields.hasErrors('fullName')} ? 'is-invalid'"
+                                   placeholder="Nguyễn Văn A" required>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}"></div>
+                        </div>
+
+                        <!-- Email -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold" for="email">
+                                Email <span class="text-danger">*</span>
+                            </label>
+                            <input type="email" class="form-control" id="email"
+                                   th:field="*{email}"
+                                   th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'"
+                                   placeholder="nguyenvana@email.com" required>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                        </div>
+
+                        <!-- Số điện thoại -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold" for="phone">
+                                Số điện thoại
+                            </label>
+                            <input type="tel" class="form-control" id="phone"
+                                   th:field="*{phone}"
+                                   th:classappend="${#fields.hasErrors('phone')} ? 'is-invalid'"
+                                   placeholder="0912 345 678">
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></div>
+                        </div>
+
+                        <!-- Mật khẩu -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold" for="password">
+                                Mật khẩu <span class="text-danger">*</span>
+                            </label>
+                            <input type="password" class="form-control" id="password"
+                                   th:field="*{password}"
+                                   th:classappend="${#fields.hasErrors('password')} ? 'is-invalid'"
+                                   placeholder="Tối thiểu 6 ký tự" required>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+                        </div>
+
+                        <!-- Xác nhận mật khẩu -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold" for="confirmPassword">
+                                Xác nhận mật khẩu <span class="text-danger">*</span>
+                            </label>
+                            <input type="password" class="form-control" id="confirmPassword"
+                                   th:field="*{confirmPassword}"
+                                   th:classappend="${#fields.hasErrors('confirmPassword')} ? 'is-invalid'"
+                                   placeholder="Nhập lại mật khẩu" required>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}"></div>
+                        </div>
+                    </div>
+
+                    <!-- Ghi chú -->
+                    <div class="mt-3 p-3 bg-light rounded border">
+                        <small class="text-muted">
+                            <strong>📌 Lưu ý:</strong> Tài khoản sẽ được tạo với vai trò <span class="badge bg-info text-dark">CUSTOMER</span>
+                            và trạng thái <span class="badge bg-success">ACTIVE</span>.
+                            Khách hàng có thể đăng nhập ngay bằng email và mật khẩu đã cung cấp.
+                        </small>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="mt-4 d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            ➕ Thêm khách hàng
+                        </button>
+                        <a th:href="@{/admin/customers}" class="btn btn-outline-secondary">Hủy</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+    <div th:replace="~{admin/fragments/footer :: footer}"></div>
+</div>
+</body>
+</html>

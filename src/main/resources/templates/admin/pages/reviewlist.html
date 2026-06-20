@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head th:replace="~{admin/fragments/head :: head('Quản lý Đánh giá', null)}"></head>
+<body>
+<div th:replace="~{admin/fragments/sidebar :: sidebar}"></div>
+<div class="admin-main">
+    <div th:replace="~{admin/fragments/header :: header}"></div>
+    <main class="flex-grow-1 p-4">
+        <div th:replace="~{admin/fragments/breadcrumb :: breadcrumb('Đánh giá')}"></div>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="fw-bold mb-0">⭐ Quản Lý Đánh Giá</h4>
+        </div>
+
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${successMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${errorMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <div class="card admin-card mb-4">
+            <div class="card-body">
+                <form th:action="@{/admin/reviews}" method="get">
+                    <div class="row g-2 align-items-end">
+                        <div class="col-md-3">
+                            <select name="status" class="form-select form-select-sm">
+                                <option value="">Tất cả trạng thái</option>
+                                <option value="VISIBLE" th:selected="${status == 'VISIBLE'}">Hiển thị</option>
+                                <option value="HIDDEN" th:selected="${status == 'HIDDEN'}">Đã ẩn</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-primary btn-sm w-100">Lọc</button>
+                        </div>
+                        <div class="col-md-2">
+                            <a th:href="@{/admin/reviews}" class="btn btn-outline-secondary btn-sm w-100">Đặt lại</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card admin-card">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-admin table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Tour</th>
+                                <th>Khách hàng</th>
+                                <th>Sao</th>
+                                <th>Nội dung</th>
+                                <th>Ngày</th>
+                                <th>Trạng thái</th>
+                                <th>Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:if="${reviewPage.content.isEmpty()}">
+                                <td colspan="7" class="text-center text-muted py-4">Không tìm thấy đánh giá nào.</td>
+                            </tr>
+                            <tr th:each="rv : ${reviewPage.content}">
+                                <td>
+                                    <strong th:text="${rv.tour.name}">Tour</strong>
+                                    <div class="small text-muted" th:text="${rv.tour.code}">CODE</div>
+                                </td>
+                                <td>
+                                    <span th:text="${rv.user.fullName}">Khách</span>
+                                    <div class="small text-muted" th:text="${rv.user.email}">email</div>
+                                </td>
+                                <td>
+                                    <span class="text-warning" th:text="${'★'.repeat(rv.rating)}">★</span>
+                                    <span class="text-muted" th:text="${'☆'.repeat(5 - rv.rating)}">☆</span>
+                                </td>
+                                <td style="max-width:280px">
+                                    <div class="fw-semibold small" th:if="${rv.title}" th:text="${rv.title}">Tiêu đề</div>
+                                    <div class="small text-muted text-truncate" th:text="${rv.content}">Nội dung</div>
+                                </td>
+                                <td th:text="${#temporals.format(rv.createdAt, 'dd/MM/yyyy')}">01/01</td>
+                                <td>
+                                    <span th:if="${rv.status == 'VISIBLE'}" class="badge bg-success rounded-pill">Hiển thị</span>
+                                    <span th:if="${rv.status == 'HIDDEN'}" class="badge bg-secondary rounded-pill">Đã ẩn</span>
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <form th:action="@{/admin/reviews/toggle}" method="post" class="m-0">
+                                            <input type="hidden" name="id" th:value="${rv.id}">
+                                            <input type="hidden" name="status" th:value="${status}">
+                                            <input type="hidden" name="page" th:value="${reviewPage.number}">
+                                            <button type="submit" class="btn btn-outline-warning"
+                                                    th:text="${rv.status == 'VISIBLE'} ? 'Ẩn' : 'Hiện'">Ẩn</button>
+                                        </form>
+                                        <a th:href="@{/admin/reviews/delete(id=${rv.id})}" class="btn btn-outline-danger">Xóa</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <nav th:if="${reviewPage.totalPages > 1}" aria-label="Phân trang" class="mt-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <span class="text-muted small"
+                      th:text="'Hiển thị ' + (${reviewPage.number * reviewPage.size + 1}) + '-' + (${reviewPage.number * reviewPage.size + reviewPage.numberOfElements}) + ' của ' + ${reviewPage.totalElements} + ' kết quả'">
+                </span>
+                <ul class="pagination pagination-sm mb-0">
+                    <li class="page-item" th:classappend="${reviewPage.first} ? 'disabled'">
+                        <a class="page-link" th:href="@{/admin/reviews(status=${status}, page=${reviewPage.number - 1})}">←</a>
+                    </li>
+                    <li th:each="i : ${#numbers.sequence(0, reviewPage.totalPages - 1)}"
+                        class="page-item" th:classappend="${i == reviewPage.number} ? 'active'">
+                        <a class="page-link" th:href="@{/admin/reviews(status=${status}, page=${i})}" th:text="${i + 1}">1</a>
+                    </li>
+                    <li class="page-item" th:classappend="${reviewPage.last} ? 'disabled'">
+                        <a class="page-link" th:href="@{/admin/reviews(status=${status}, page=${reviewPage.number + 1})}">→</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </main>
+    <div th:replace="~{admin/fragments/footer :: footer}"></div>
+</div>
+</body>
+</html>

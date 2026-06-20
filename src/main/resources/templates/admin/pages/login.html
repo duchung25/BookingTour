@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head th:replace="~{admin/fragments/head :: head('Đăng nhập Admin', '/css/admin/login.css')}"></head>
+<body>
+<div class="admin-login-wrapper">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-5">
+                <div class="card admin-login-card overflow-hidden">
+                    <div class="card-body p-5">
+                        <div class="text-center mb-4">
+                            <div class="fs-1 mb-2">⚙️</div>
+                            <h4 class="fw-bold"><span class="text-primary">Admin</span><span class="text-warning">Panel</span></h4>
+                            <p class="text-muted small">Đăng nhập vào hệ thống quản trị</p>
+                        </div>
+
+                        <!-- Thông báo lỗi đăng nhập -->
+                        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                            <span th:text="${errorMessage}"></span>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+
+                        <!-- Thông báo đăng xuất thành công -->
+                        <div th:if="${logoutMessage}" class="alert alert-info alert-dismissible fade show" role="alert">
+                            <i class="bi bi-box-arrow-right me-2"></i>
+                            <span th:text="${logoutMessage}"></span>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+
+                        <!-- Form đăng nhập admin: gửi POST về /login (Spring Security xử lý) -->
+                        <!-- SuccessHandler sẽ kiểm tra role ADMIN → redirect /admin/dashboard -->
+                        <form th:action="@{/login}" method="post">
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Email quản trị</label>
+                                <input type="email" name="email" class="form-control form-control-lg" placeholder="admin@traveler.vn" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Mật khẩu</label>
+                                <input type="password" name="password" class="form-control form-control-lg" placeholder="Nhập mật khẩu" required>
+                            </div>
+                            <div class="form-check mb-4">
+                                <input type="checkbox" class="form-check-input" id="adminRemember">
+                                <label class="form-check-label small" for="adminRemember">Duy trì đăng nhập</label>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100 btn-lg fw-semibold">Đăng nhập</button>
+                        </form>
+                        <hr class="my-4">
+                        <div class="d-grid">
+                            <a th:href="@{/oauth2/authorization/google}" class="btn btn-light border py-2 fw-semibold d-flex align-items-center justify-content-center">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google" width="20" class="me-2">
+                                Đăng nhập bằng Google
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center mt-3">
+                    <a th:href="@{/}" class="text-white-50 text-decoration-none small">← Về trang chủ</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

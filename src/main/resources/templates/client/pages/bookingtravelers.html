@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head th:replace="~{client/fragments/head :: head('Cập nhật hành khách', null)}"></head>
+<body>
+<div th:replace="~{client/fragments/header :: header}"></div>
+<div th:replace="~{client/fragments/navbar :: navbar}"></div>
+<section class="py-5">
+    <div class="container">
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a th:href="@{/booking/history}" class="text-decoration-none" style="color:var(--color-ocean);">Lịch sử đặt tour</a></li>
+                <li class="breadcrumb-item"><a th:href="@{/booking/detail(id=${booking.id})}" class="text-decoration-none" style="color:var(--color-ocean);" th:text="${booking.bookingCode}">BK-XXX</a></li>
+                <li class="breadcrumb-item active">Cập nhật hành khách</li>
+            </ol>
+        </nav>
+
+        <h3 class="fw-bold mb-4">👥 Cập Nhật Danh Sách Hành Khách</h3>
+
+        <!-- Error message -->
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${errorMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <!-- Booking info -->
+        <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h6 class="fw-bold mb-1" th:text="${booking.tourDeparture.tour.name}">Tên tour</h6>
+                    <small class="text-muted"
+                           th:text="'Mã đơn: ' + ${booking.bookingCode} + ' • Khởi hành: ' + ${#temporals.format(booking.tourDeparture.departureDate, 'dd/MM/yyyy')}">
+                        Info
+                    </small>
+                </div>
+                <div class="col-md-4 text-end">
+                    <span class="badge bg-primary fs-6"
+                          th:text="${booking.adultCount + ' người lớn'}">0 người lớn</span>
+                    <span th:if="${booking.childCount > 0}" class="badge bg-info fs-6"
+                          th:text="${booking.childCount + ' trẻ em'}">0 trẻ em</span>
+                    <span th:if="${booking.infantCount > 0}" class="badge bg-warning text-dark fs-6"
+                          th:text="${booking.infantCount + ' trẻ nhỏ'}">0 trẻ nhỏ</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="alert alert-info small">
+            ℹ️ Bạn cần nhập đầy đủ thông tin cho
+            <strong th:text="${booking.totalPeople}">0</strong> hành khách
+            (<span th:text="${booking.adultCount}">0</span> người lớn<span th:if="${booking.childCount > 0}" th:text="', ' + ${booking.childCount} + ' trẻ em'"></span><span th:if="${booking.infantCount > 0}" th:text="', ' + ${booking.infantCount} + ' trẻ nhỏ'"></span>).
+            Họ tên là bắt buộc, các thông tin khác là tùy chọn.
+        </div>
+
+        <form th:action="@{/booking/travelers}" method="post">
+            <input type="hidden" name="id" th:value="${booking.id}">
+
+            <!-- ADULT rows -->
+            <div th:each="i : ${#numbers.sequence(0, booking.adultCount - 1)}">
+                <div class="card border-0 shadow-sm rounded-4 p-4 mb-3">
+                    <h6 class="fw-bold mb-3 text-primary">
+                        <span th:text="'👤 Người lớn ' + ${i + 1}">Người lớn 1</span>
+                    </h6>
+                    <input type="hidden" name="travelerType" value="ADULT">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Họ tên <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="fullName" maxlength="100" required
+                                   th:value="${booking.travelers.size() > i ? booking.travelers[__${i}__].fullName : ''}">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label fw-semibold">Ngày sinh</label>
+                            <input type="date" class="form-control" name="dateOfBirth"
+                                   th:value="${booking.travelers.size() > i and booking.travelers[__${i}__].dateOfBirth != null ? booking.travelers[__${i}__].dateOfBirth : ''}">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label fw-semibold">Giới tính</label>
+                            <select class="form-select" name="gender">
+                                <option value="">-- Chọn --</option>
+                                <option value="MALE" th:selected="${booking.travelers.size() > i and booking.travelers[__${i}__].gender == 'MALE'}">Nam</option>
+                                <option value="FEMALE" th:selected="${booking.travelers.size() > i and booking.travelers[__${i}__].gender == 'FEMALE'}">Nữ</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label fw-semibold">CMND/CCCD</label>
+                            <input type="text" class="form-control" name="identityNumber" maxlength="30"
+                                   th:value="${booking.travelers.size() > i ? booking.travelers[__${i}__].identityNumber : ''}">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label fw-semibold">Quốc tịch</label>
+                            <input type="text" class="form-control" name="nationality" maxlength="50"
+                                   th:value="${booking.travelers.size() > i ? booking.travelers[__${i}__].nationality : 'Việt Nam'}">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">Ghi chú</label>
+                            <input type="text" class="form-control" name="note" maxlength="255"
+                                   th:value="${booking.travelers.size() > i ? booking.travelers[__${i}__].note : ''}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CHILD rows -->
+            <div th:if="${booking.childCount > 0}" th:each="j : ${#numbers.sequence(0, booking.childCount - 1)}">
+                <div class="card border-0 shadow-sm rounded-4 p-4 mb-3" th:with="idx=${booking.adultCount + j}">
+                    <h6 class="fw-bold mb-3 text-info">
+                        <span th:text="'🧒 Trẻ em ' + ${j + 1}">Trẻ em 1</span>
+                    </h6>
+                    <input type="hidden" name="travelerType" value="CHILD">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Họ tên <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="fullName" maxlength="100" required
+                                   th:value="${booking.travelers.size() > idx ? booking.travelers[__${idx}__].fullName : ''}">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label fw-semibold">Ngày sinh</label>
+                            <input type="date" class="form-control" name="dateOfBirth"
+                                   th:value="${booking.travelers.size() > idx and booking.travelers[__${idx}__].dateOfBirth != null ? booking.travelers[__${idx}__].dateOfBirth : ''}">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label fw-semibold">Giới tính</label>
+                            <select class="form-select" name="gender">
+                                <option value="">-- Chọn --</option>
+                                <option value="MALE" th:selected="${booking.travelers.size() > idx and booking.travelers[__${idx}__].gender == 'MALE'}">Nam</option>
+                                <option value="FEMALE" th:selected="${booking.travelers.size() > idx and booking.travelers[__${idx}__].gender == 'FEMALE'}">Nữ</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label fw-semibold">CMND/CCCD</label>
+                            <input type="text" class="form-control" name="identityNumber" maxlength="30"
+                                   th:value="${booking.travelers.size() > idx ? booking.travelers[__${idx}__].identityNumber : ''}">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label fw-semibold">Quốc tịch</label>
+                            <input type="text" class="form-control" name="nationality" maxlength="50"
+                                   th:value="${booking.travelers.size() > idx ? booking.travelers[__${idx}__].nationality : 'Việt Nam'}">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">Ghi chú</label>
+                            <input type="text" class="form-control" name="note" maxlength="255"
+                                   th:value="${booking.travelers.size() > idx ? booking.travelers[__${idx}__].note : ''}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- INFANT rows -->
+            <div th:if="${booking.infantCount > 0}" th:each="k : ${#numbers.sequence(0, booking.infantCount - 1)}">
+                <div class="card border-0 shadow-sm rounded-4 p-4 mb-3" th:with="idx=${booking.adultCount + booking.childCount + k}">
+                    <h6 class="fw-bold mb-3 text-warning">
+                        <span th:text="'👶 Trẻ nhỏ ' + ${k + 1}">Trẻ nhỏ 1</span>
+                    </h6>
+                    <input type="hidden" name="travelerType" value="INFANT">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Họ tên <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="fullName" maxlength="100" required
+                                   th:value="${booking.travelers.size() > idx ? booking.travelers[__${idx}__].fullName : ''}">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label fw-semibold">Ngày sinh</label>
+                            <input type="date" class="form-control" name="dateOfBirth"
+                                   th:value="${booking.travelers.size() > idx and booking.travelers[__${idx}__].dateOfBirth != null ? booking.travelers[__${idx}__].dateOfBirth : ''}">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label fw-semibold">Giới tính</label>
+                            <select class="form-select" name="gender">
+                                <option value="">-- Chọn --</option>
+                                <option value="MALE" th:selected="${booking.travelers.size() > idx and booking.travelers[__${idx}__].gender == 'MALE'}">Nam</option>
+                                <option value="FEMALE" th:selected="${booking.travelers.size() > idx and booking.travelers[__${idx}__].gender == 'FEMALE'}">Nữ</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label fw-semibold">CMND/CCCD</label>
+                            <input type="text" class="form-control" name="identityNumber" maxlength="30"
+                                   th:value="${booking.travelers.size() > idx ? booking.travelers[__${idx}__].identityNumber : ''}">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label fw-semibold">Quốc tịch</label>
+                            <input type="text" class="form-control" name="nationality" maxlength="50"
+                                   th:value="${booking.travelers.size() > idx ? booking.travelers[__${idx}__].nationality : 'Việt Nam'}">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">Ghi chú</label>
+                            <input type="text" class="form-control" name="note" maxlength="255"
+                                   th:value="${booking.travelers.size() > idx ? booking.travelers[__${idx}__].note : ''}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex gap-2 mt-4">
+                <button type="submit" class="btn btn-primary btn-lg">💾 Lưu danh sách hành khách</button>
+                <a th:href="@{/booking/detail(id=${booking.id})}" class="btn btn-outline-secondary btn-lg">Hủy</a>
+            </div>
+        </form>
+    </div>
+</section>
+<div th:replace="~{client/fragments/footer :: footer}"></div>
+</body>
+</html>

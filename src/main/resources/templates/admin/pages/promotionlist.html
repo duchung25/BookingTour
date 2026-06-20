@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head th:replace="~{admin/fragments/head :: head('Quản lý Khuyến mãi', null)}"></head>
+<body>
+<div th:replace="~{admin/fragments/sidebar :: sidebar}"></div>
+<div class="admin-main">
+    <div th:replace="~{admin/fragments/header :: header}"></div>
+    <main class="flex-grow-1 p-4">
+        <div th:replace="~{admin/fragments/breadcrumb :: breadcrumb('Khuyến mãi')}"></div>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="fw-bold mb-0">🎁 Quản Lý Khuyến Mãi</h4>
+            <a th:href="@{/admin/promotions/create}" class="btn btn-primary">+ Thêm khuyến mãi</a>
+        </div>
+
+        <!-- Flash Messages -->
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${successMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${errorMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <!-- Filter -->
+        <div class="card admin-card mb-4">
+            <div class="card-body">
+                <form th:action="@{/admin/promotions}" method="get">
+                    <div class="row g-2 align-items-end">
+                        <div class="col-md-3">
+                            <select name="status" class="form-select form-select-sm">
+                                <option value="">Tất cả trạng thái</option>
+                                <option value="ACTIVE" th:selected="${status == 'ACTIVE'}">Đang hoạt động</option>
+                                <option value="INACTIVE" th:selected="${status == 'INACTIVE'}">Ngưng hoạt động</option>
+                                <option value="EXPIRED" th:selected="${status == 'EXPIRED'}">Hết hạn</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-primary btn-sm w-100">Lọc</button>
+                        </div>
+                        <div class="col-md-2">
+                            <a th:href="@{/admin/promotions}" class="btn btn-outline-secondary btn-sm w-100">Đặt lại</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Table -->
+        <div class="card admin-card">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-admin table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Mã</th>
+                                <th>Tên khuyến mãi</th>
+                                <th>Giảm giá</th>
+                                <th>Bắt đầu</th>
+                                <th>Kết thúc</th>
+                                <th>Đã dùng</th>
+                                <th>Trạng thái</th>
+                                <th>Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:if="${promotionPage.content.isEmpty()}">
+                                <td colspan="8" class="text-center text-muted py-4">Không tìm thấy khuyến mãi nào.</td>
+                            </tr>
+                            <tr th:each="promo : ${promotionPage.content}">
+                                <td><strong th:text="${promo.code}">CODE</strong></td>
+                                <td th:text="${promo.name}">Tên</td>
+                                <td>
+                                    <span th:if="${promo.discountType == 'PERCENT'}" th:text="${promo.discountValue + '%'}">10%</span>
+                                    <span th:if="${promo.discountType == 'FIXED'}" th:text="${#numbers.formatDecimal(promo.discountValue, 0, 'COMMA', 0, 'POINT') + 'đ'}">100.000đ</span>
+                                </td>
+                                <td th:text="${#temporals.format(promo.startDate, 'dd/MM/yyyy')}">01/01</td>
+                                <td th:text="${#temporals.format(promo.endDate, 'dd/MM/yyyy')}">31/12</td>
+                                <td th:text="${promo.usedCount + '/' + (promo.usageLimit != null ? promo.usageLimit : '∞')}">0/∞</td>
+                                <td>
+                                    <span th:if="${promo.status == 'ACTIVE'}" class="badge bg-success rounded-pill">Đang hoạt động</span>
+                                    <span th:if="${promo.status == 'INACTIVE'}" class="badge bg-warning text-dark rounded-pill">Ngưng</span>
+                                    <span th:if="${promo.status == 'EXPIRED'}" class="badge bg-secondary rounded-pill">Hết hạn</span>
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <a th:href="@{/admin/promotions/update(id=${promo.id})}" class="btn btn-outline-primary">Sửa</a>
+                                        <a th:href="@{/admin/promotions/delete(id=${promo.id})}" class="btn btn-outline-danger">Xóa</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <nav th:if="${promotionPage.totalPages > 1}" aria-label="Phân trang" class="mt-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <span class="text-muted small"
+                      th:text="'Hiển thị ' + (${promotionPage.number * promotionPage.size + 1}) + '-' + (${promotionPage.number * promotionPage.size + promotionPage.numberOfElements}) + ' của ' + ${promotionPage.totalElements} + ' kết quả'">
+                </span>
+                <ul class="pagination pagination-sm mb-0">
+                    <li class="page-item" th:classappend="${promotionPage.first} ? 'disabled'">
+                        <a class="page-link" th:href="@{/admin/promotions(status=${status}, page=${promotionPage.number - 1})}">←</a>
+                    </li>
+                    <li th:each="i : ${#numbers.sequence(0, promotionPage.totalPages - 1)}"
+                        class="page-item" th:classappend="${i == promotionPage.number} ? 'active'">
+                        <a class="page-link" th:href="@{/admin/promotions(status=${status}, page=${i})}" th:text="${i + 1}">1</a>
+                    </li>
+                    <li class="page-item" th:classappend="${promotionPage.last} ? 'disabled'">
+                        <a class="page-link" th:href="@{/admin/promotions(status=${status}, page=${promotionPage.number + 1})}">→</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </main>
+    <div th:replace="~{admin/fragments/footer :: footer}"></div>
+</div>
+</body>
+</html>

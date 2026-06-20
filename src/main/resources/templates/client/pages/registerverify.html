@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head th:replace="~{client/fragments/head :: head('Xác thực tài khoản', null)}"></head>
+<body>
+<div class="auth-wrapper">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-5">
+                <div class="auth-card overflow-hidden">
+                    <div class="card-body p-5">
+                        <div class="text-center mb-4">
+                            <h3 class="fw-bold"><span class="navbar-brand-text"><span class="brand-primary">Tra</span><span class="brand-accent">veler</span></span></h3>
+                            <p style="color:var(--color-text-muted);">Xác thực tài khoản đăng ký</p>
+                        </div>
+
+                        <!-- Thông báo -->
+                        <div class="alert alert-info small">
+                            Mã xác thực 6 chữ số đã được gửi tới email
+                            <strong th:text="${maskedEmail}">ngu***@gmail.com</strong>.
+                            Vui lòng kiểm tra hộp thư (bao gồm thư mục Spam).
+                        </div>
+
+                        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show small" role="alert">
+                            <span th:text="${successMessage}"></span>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show small" role="alert">
+                            <span th:text="${errorMessage}"></span>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+
+                        <!-- Form nhập OTP -->
+                        <form th:action="@{/register/verify}" method="post" class="mb-3">
+                            <div class="mb-4">
+                                <label class="form-label fw-semibold">Mã xác thực (OTP)</label>
+                                <input type="text" name="otp" class="form-control form-control-lg text-center fw-bold"
+                                       maxlength="6" pattern="[0-9]{6}" inputmode="numeric"
+                                       placeholder="- - - - - -"
+                                       style="letter-spacing:8px;font-size:1.5rem;"
+                                       autocomplete="one-time-code" required autofocus />
+                            </div>
+                            <button type="submit" class="btn w-100 btn-lg fw-semibold"
+                                    style="background:var(--color-ocean);color:#fff;border-radius:var(--radius-sm);">
+                                Xác nhận
+                            </button>
+                        </form>
+
+                        <!-- Countdown + Gửi lại mã -->
+                        <div class="text-center mb-3">
+                            <p class="small mb-2" style="color:var(--color-text-muted);">
+                                Mã có hiệu lực trong: <strong id="countdown" style="color:var(--color-amber);">05:00</strong>
+                            </p>
+                            <form th:action="@{/register/resend-otp}" method="post" class="d-inline">
+                                <button type="submit" id="resendBtn" class="btn btn-link text-decoration-none fw-semibold p-0 small" style="color:var(--color-amber);" disabled>
+                                    Gửi lại mã
+                                </button>
+                            </form>
+                        </div>
+
+                        <hr class="my-4">
+                        <p class="text-center mb-0 small">
+                            <a th:href="@{/register}" class="text-decoration-none fw-semibold" style="color:var(--color-amber);">← Quay lại đăng ký</a>
+                        </p>
+                    </div>
+                </div>
+                <div class="text-center mt-3">
+                    <a th:href="@{/}" class="text-white text-decoration-none small opacity-75">← Quay về trang chủ</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+<script>
+    // Countdown 5 phút
+    (function () {
+        let totalSeconds = 5 * 60;
+        const countdownEl = document.getElementById('countdown');
+        const resendBtn = document.getElementById('resendBtn');
+
+        const timer = setInterval(function () {
+            totalSeconds--;
+            if (totalSeconds <= 0) {
+                clearInterval(timer);
+                countdownEl.textContent = '00:00';
+                countdownEl.style.color = '#dc3545';
+                resendBtn.disabled = false;
+                return;
+            }
+            const m = String(Math.floor(totalSeconds / 60)).padStart(2, '0');
+            const s = String(totalSeconds % 60).padStart(2, '0');
+            countdownEl.textContent = m + ':' + s;
+        }, 1000);
+    })();
+</script>
+</body>
+</html>

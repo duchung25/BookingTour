@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head th:replace="~{client/fragments/head :: head('Đăng ký tài khoản', null)}"></head>
+<body>
+<div class="auth-wrapper">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="auth-card overflow-hidden">
+                    <div class="card-body p-5">
+                        <div class="text-center mb-4">
+                            <h3 class="fw-bold"><span class="navbar-brand-text"><span class="brand-primary">Tra</span><span class="brand-accent">veler</span></span></h3>
+                            <p style="color:var(--color-text-muted);">Tạo tài khoản để bắt đầu hành trình</p>
+                        </div>
+
+                        <!-- Thông báo lỗi nghiệp vụ (email trùng, password không khớp...) -->
+                        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <span th:text="${errorMessage}"></span>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+
+                        <form th:action="@{/register}" th:object="${registerRequest}" method="post">
+
+                            <!-- Họ tên -->
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Họ và tên <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" th:field="*{fullName}"
+                                       th:classappend="${#fields.hasErrors('fullName')} ? 'is-invalid'"
+                                       placeholder="Nguyễn Văn A" />
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}"></div>
+                            </div>
+
+                            <!-- Email -->
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Email <span class="text-danger">*</span></label>
+                                <input type="email" class="form-control" th:field="*{email}"
+                                       th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'"
+                                       placeholder="email@example.com" />
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                            </div>
+
+                            <!-- Số điện thoại -->
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Số điện thoại</label>
+                                <input type="tel" class="form-control" th:field="*{phone}"
+                                       th:classappend="${#fields.hasErrors('phone')} ? 'is-invalid'"
+                                       placeholder="0912 345 678" />
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></div>
+                            </div>
+
+                            <!-- Mật khẩu -->
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Mật khẩu <span class="text-danger">*</span></label>
+                                <input type="password" class="form-control" th:field="*{password}"
+                                       th:classappend="${#fields.hasErrors('password')} ? 'is-invalid'"
+                                       placeholder="Tối thiểu 6 ký tự" />
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+                            </div>
+
+                            <!-- Xác nhận mật khẩu -->
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Xác nhận mật khẩu <span class="text-danger">*</span></label>
+                                <input type="password" class="form-control" th:field="*{confirmPassword}"
+                                       th:classappend="${#fields.hasErrors('confirmPassword')} ? 'is-invalid'"
+                                       placeholder="Nhập lại mật khẩu" />
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}"></div>
+                            </div>
+
+                            <!-- Điều khoản -->
+                            <div class="form-check mb-4">
+                                <input type="checkbox" class="form-check-input" id="agree" required>
+                                <label class="form-check-label small" for="agree">Tôi đồng ý với <a href="#" class="text-decoration-none" style="color:var(--color-amber);">điều khoản sử dụng</a> và <a href="#" class="text-decoration-none" style="color:var(--color-amber);">chính sách bảo mật</a></label>
+                            </div>
+
+                            <button type="submit" class="btn w-100 btn-lg fw-semibold" style="background:var(--color-ocean);color:#fff;border-radius:var(--radius-sm);">Đăng ký</button>
+                        </form>
+
+                        <hr class="my-4">
+
+                        <!-- Nút đăng ký bằng Google -->
+                        <div class="d-grid mb-4">
+                            <a th:href="@{/oauth2/authorization/google}" class="btn btn-light border py-2 fw-semibold d-flex align-items-center justify-content-center" style="border-radius:var(--radius-sm);">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google" width="20" class="me-2">
+                                Tiếp tục bằng Google
+                            </a>
+                        </div>
+
+                        <p class="text-center mb-0 small">Đã có tài khoản? <a th:href="@{/login}" class="text-decoration-none fw-semibold" style="color:var(--color-amber);">Đăng nhập</a></p>
+                    </div>
+                </div>
+                <div class="text-center mt-3">
+                    <a th:href="@{/}" class="text-white text-decoration-none small opacity-75">← Quay về trang chủ</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

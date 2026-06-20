@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head th:replace="~{client/fragments/head :: head('Thanh toán', null)}"></head>
+<body>
+<div th:replace="~{client/fragments/header :: header}"></div>
+<div th:replace="~{client/fragments/navbar :: navbar}"></div>
+<section class="py-5">
+    <div class="container">
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a th:href="@{/}" class="text-decoration-none" style="color:var(--color-ocean);">Trang chủ</a></li>
+                <li class="breadcrumb-item"><a th:href="@{/booking/history}" class="text-decoration-none" style="color:var(--color-ocean);">Lịch sử đặt tour</a></li>
+                <li class="breadcrumb-item active">Thanh toán</li>
+            </ol>
+        </nav>
+
+        <h3 class="fw-bold mb-4">💳 Thanh Toán</h3>
+
+        <!-- Error message -->
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${errorMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <form th:action="@{/payment}" method="post" id="paymentForm">
+            <input type="hidden" name="bookingId" th:value="${booking.id}">
+            <div class="row g-4">
+                <div class="col-lg-7">
+                    <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
+                        <h5 class="fw-bold mb-3">Chọn phương thức thanh toán</h5>
+                        <div class="list-group list-group-flush">
+                            <label class="list-group-item d-flex align-items-center gap-3 border rounded-3 mb-2 p-3">
+                                <input class="form-check-input" type="radio" name="paymentMethod" value="BANK_TRANSFER" checked>
+                                <div><div class="fw-semibold">🏦 Chuyển khoản ngân hàng</div><small class="text-muted">Vietcombank, Techcombank, BIDV, MB...</small></div>
+                            </label>
+                            <label class="list-group-item d-flex align-items-center gap-3 border rounded-3 mb-2 p-3">
+                                <input class="form-check-input" type="radio" name="paymentMethod" value="MOMO">
+                                <div><div class="fw-semibold">📱 Ví MoMo</div><small class="text-muted">Thanh toán qua ví điện tử MoMo</small></div>
+                            </label>
+                            <label class="list-group-item d-flex align-items-center gap-3 border rounded-3 mb-2 p-3">
+                                <input class="form-check-input" type="radio" name="paymentMethod" value="VNPAY">
+                                <div><div class="fw-semibold">💳 VNPay</div><small class="text-muted">Thẻ ATM/Visa/Mastercard qua VNPay</small></div>
+                            </label>
+                            <label class="list-group-item d-flex align-items-center gap-3 border rounded-3 p-3">
+                                <input class="form-check-input" type="radio" name="paymentMethod" value="CASH">
+                                <div><div class="fw-semibold">💵 Thanh toán tại văn phòng</div><small class="text-muted">Tiền mặt hoặc quẹt thẻ</small></div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Bank transfer info (shown when BANK_TRANSFER selected) -->
+                    <div class="card border-0 shadow-sm rounded-4 p-4 mb-4" id="bankInfo">
+                        <h5 class="fw-bold mb-3">🏦 Thông tin chuyển khoản</h5>
+                        <div class="bg-light rounded-3 p-3">
+                            <div class="mb-2"><strong>Ngân hàng:</strong> Vietcombank</div>
+                            <div class="mb-2"><strong>Số tài khoản:</strong> 1234 5678 9012</div>
+                            <div class="mb-2"><strong>Chủ tài khoản:</strong> CÔNG TY DU LỊCH ABC</div>
+                            <div class="mb-2"><strong>Nội dung CK:</strong> <span class="text-primary fw-bold" th:text="${booking.bookingCode}">BK-XXX</span></div>
+                        </div>
+                        <small class="text-muted mt-2 d-block">⚠️ Vui lòng ghi đúng nội dung chuyển khoản để được xác nhận nhanh nhất.</small>
+                    </div>
+
+                    <div class="card border-0 shadow-sm rounded-4 p-4">
+                        <h5 class="fw-bold mb-3">📝 Ghi chú</h5>
+                        <textarea class="form-control" name="note" rows="3"
+                                  placeholder="Ghi chú thêm cho giao dịch thanh toán (tuỳ chọn)"></textarea>
+                    </div>
+                </div>
+
+                <div class="col-lg-5">
+                    <div class="card border-0 shadow rounded-4 p-4 sticky-top" style="top:90px;">
+                        <h5 class="fw-bold mb-3">📋 Tóm tắt đơn hàng</h5>
+                        <div class="d-flex gap-3 mb-3">
+                            <img th:if="${!booking.tourDeparture.tour.images.isEmpty()}"
+                                 th:src="@{${booking.tourDeparture.tour.images[0].imageUrl}}"
+                                 alt="Tour" class="rounded-3" style="width:80px;height:60px;object-fit:cover;">
+                            <div>
+                                <h6 class="fw-bold small mb-1" th:text="${booking.tourDeparture.tour.name}">Tên tour</h6>
+                                <small class="text-muted"
+                                       th:text="${booking.tourDeparture.tour.durationDays + 'N' + booking.tourDeparture.tour.durationNights + 'Đ' + ' • ' + #temporals.format(booking.tourDeparture.departureDate, 'dd/MM/yyyy')}">4N3Đ • 15/04/2026</small>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="small">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span th:text="${booking.adultCount + ' người lớn'}">2 người lớn</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2" th:if="${booking.childCount > 0}">
+                                <span th:text="${booking.childCount + ' trẻ em'}">1 trẻ em</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2" th:if="${booking.infantCount > 0}">
+                                <span th:text="${booking.infantCount + ' trẻ nhỏ'}">0 trẻ nhỏ</span>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="small">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Mã đơn</span>
+                                <strong th:text="${booking.bookingCode}">BK-XXX</strong>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Giá gốc</span>
+                                <strong th:text="${#numbers.formatDecimal(booking.originalAmount, 0, 'COMMA', 0, 'POINT') + 'đ'}">0đ</strong>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2 text-success" th:if="${booking.discountAmount.compareTo(T(java.math.BigDecimal).ZERO) > 0}">
+                                <span>Giảm giá</span>
+                                <strong th:text="${'-' + #numbers.formatDecimal(booking.discountAmount, 0, 'COMMA', 0, 'POINT') + 'đ'}">-0đ</strong>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between fw-bold fs-5 mb-4">
+                            <span>TỔNG CỘNG</span>
+                            <span class="text-primary" th:text="${#numbers.formatDecimal(booking.finalAmount, 0, 'COMMA', 0, 'POINT') + 'đ'}">0đ</span>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-lg w-100 fw-semibold">Thanh toán ngay</button>
+                        <a th:href="@{/booking/history}" class="btn btn-outline-secondary w-100 mt-2">← Quay lại</a>
+                        <div class="text-center mt-3 small text-muted">🔒 Giao dịch được mã hóa SSL 256-bit</div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+<div th:replace="~{client/fragments/footer :: footer}"></div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var bankInfo = document.getElementById('bankInfo');
+    var radios = document.querySelectorAll('input[name="paymentMethod"]');
+
+    function toggleBankInfo() {
+        var selected = document.querySelector('input[name="paymentMethod"]:checked');
+        if (bankInfo) {
+            bankInfo.style.display = (selected && selected.value === 'BANK_TRANSFER') ? 'block' : 'none';
+        }
+    }
+
+    radios.forEach(function(radio) {
+        radio.addEventListener('change', toggleBankInfo);
+    });
+
+    toggleBankInfo();
+});
+</script>
+</body>
+</html>

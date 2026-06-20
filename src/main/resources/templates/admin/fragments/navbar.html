@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<nav th:fragment="navbar" class="admin-navbar bg-dark text-white py-2 small d-none d-lg-block">
+    <div class="container-fluid px-4">
+        <div class="d-flex gap-4">
+            <a th:href="@{/admin/dashboard}" class="text-white-50 text-decoration-none">📊 Dashboard</a>
+            <a th:href="@{/admin/tours}" class="text-white-50 text-decoration-none">🗺️ Tour</a>
+            <a th:href="@{/admin/bookings}" class="text-white-50 text-decoration-none">📋 Đơn đặt</a>
+            <a th:href="@{/admin/customers}" class="text-white-50 text-decoration-none">👥 Khách hàng</a>
+            <a th:href="@{/admin/staff}" class="text-white-50 text-decoration-none">👔 Nhân viên</a>
+            <a th:href="@{/admin/promotions}" class="text-white-50 text-decoration-none">🎁 Khuyến mãi</a>
+        </div>
+    </div>
+</nav>
+</html>

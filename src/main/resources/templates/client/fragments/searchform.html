@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="searchform" class="search-glass">
+    <form class="row g-3 align-items-end">
+        <div class="col-md-3">
+            <label class="form-label fw-semibold small" style="color:var(--color-text-muted);">📍 Điểm đến</label>
+            <select class="form-select">
+                <option selected>Tất cả điểm đến</option>
+                <option>Đà Nẵng – Hội An</option>
+                <option>Phú Quốc</option>
+                <option>Hạ Long</option>
+                <option>Sapa – Lào Cai</option>
+                <option>Nha Trang</option>
+                <option>Huế</option>
+                <option>Đà Lạt</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label fw-semibold small" style="color:var(--color-text-muted);">📅 Ngày khởi hành</label>
+            <input type="date" class="form-control">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label fw-semibold small" style="color:var(--color-text-muted);">⏱️ Thời gian</label>
+            <select class="form-select">
+                <option selected>Tất cả</option>
+                <option>1-2 ngày</option>
+                <option>3-4 ngày</option>
+                <option>5-7 ngày</option>
+                <option>Trên 7 ngày</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label fw-semibold small" style="color:var(--color-text-muted);">💰 Ngân sách</label>
+            <select class="form-select">
+                <option selected>Tất cả</option>
+                <option>Dưới 3 triệu</option>
+                <option>3 - 5 triệu</option>
+                <option>5 - 10 triệu</option>
+                <option>Trên 10 triệu</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-search-tour w-100">🔍 Tìm tour</button>
+        </div>
+    </form>
+</div>
+</html>

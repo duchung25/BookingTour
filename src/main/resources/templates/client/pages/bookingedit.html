@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head th:replace="~{client/fragments/head :: head('Sửa đơn đặt tour', null)}"></head>
+<body>
+<div th:replace="~{client/fragments/header :: header}"></div>
+<div th:replace="~{client/fragments/navbar :: navbar}"></div>
+<section class="py-5">
+    <div class="container">
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a th:href="@{/}" class="text-decoration-none" style="color:var(--color-ocean);">Trang chủ</a></li>
+                <li class="breadcrumb-item"><a th:href="@{/booking/history}" class="text-decoration-none" style="color:var(--color-ocean);">Lịch sử đặt tour</a></li>
+                <li class="breadcrumb-item active">Sửa đơn</li>
+            </ol>
+        </nav>
+
+        <h3 class="fw-bold mb-4">✏️ Sửa Đơn Đặt Tour</h3>
+
+        <!-- Error message -->
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${errorMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
+                    <div class="alert alert-info small mb-3">ℹ️ Bạn chỉ có thể sửa đơn khi đơn đang ở trạng thái <strong>"Chờ xác nhận"</strong>.</div>
+                    <h5 class="fw-bold mb-3">📅 Thông tin chuyến đi</h5>
+                    <form th:action="@{/booking/edit}" method="post">
+                        <input type="hidden" name="id" th:value="${booking.id}">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Ngày khởi hành <span class="text-danger">*</span></label>
+                                <select class="form-select" name="departureId" id="departureSelect" required>
+                                    <option th:each="dep : ${departures}"
+                                            th:value="${dep.id}"
+                                            th:selected="${dep.id == booking.tourDeparture.id}"
+                                            th:text="${#temporals.format(dep.departureDate, 'dd/MM/yyyy') + ' (còn ' + dep.availableSlots + ' chỗ)'}"
+                                            th:attr="data-adult=${dep.adultPrice.longValue()},data-child=${dep.childPrice != null ? dep.childPrice.longValue() : 0},data-infant=${dep.infantPrice != null ? dep.infantPrice.longValue() : 0}">
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label fw-semibold">Người lớn <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" name="adultCount" id="adultCount"
+                                       th:value="${booking.adultCount}" min="1" max="20" required>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label fw-semibold">Trẻ em</label>
+                                <input type="number" class="form-control" name="childCount" id="childCount"
+                                       th:value="${booking.childCount}" min="0" max="10">
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label fw-semibold">Trẻ nhỏ</label>
+                                <input type="number" class="form-control" name="infantCount" id="infantCount"
+                                       th:value="${booking.infantCount}" min="0" max="10">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Ghi chú / Yêu cầu đặc biệt</label>
+                                <textarea class="form-control" name="specialRequests" rows="3"
+                                          th:text="${booking.specialRequests}"></textarea>
+                            </div>
+                        </div>
+                        <div class="mt-4 d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                            <a th:href="@{/booking/history}" class="btn btn-outline-secondary">Hủy</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card border-0 shadow rounded-4 p-4">
+                    <h6 class="fw-bold mb-3">📋 Thông tin đơn</h6>
+                    <div class="small">
+                        <div class="mb-2"><strong>Mã đơn:</strong> <span th:text="${booking.bookingCode}">BK-XXX</span></div>
+                        <div class="mb-2"><strong>Tour:</strong>
+                            <a th:href="@{/tours/detail(id=${booking.tourDeparture.tour.id})}" class="text-decoration-none"
+                               th:text="${booking.tourDeparture.tour.name}">Tên tour</a>
+                        </div>
+                        <div class="mb-2"><strong>Trạng thái:</strong> <span class="badge bg-warning text-dark">Chờ xác nhận</span></div>
+                        <div class="mb-2"><strong>Tổng tiền hiện tại:</strong>
+                            <span class="text-primary fw-bold"
+                                  th:text="${#numbers.formatDecimal(booking.finalAmount, 0, 'COMMA', 0, 'POINT') + 'đ'}">0đ</span>
+                        </div>
+                    </div>
+                    <hr>
+                    <h6 class="fw-bold mb-2">💰 Giá mới (ước tính)</h6>
+                    <div class="small">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span id="summaryAdult">0 người lớn</span>
+                            <strong id="summaryAdultTotal">0đ</strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-1">
+                            <span id="summaryChild">0 trẻ em</span>
+                            <strong id="summaryChildTotal">0đ</strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-1">
+                            <span id="summaryInfant">0 trẻ nhỏ</span>
+                            <strong id="summaryInfantTotal">0đ</strong>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between fw-bold">
+                        <span>Tổng mới</span>
+                        <span class="text-primary" id="summaryTotal">0đ</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div th:replace="~{client/fragments/footer :: footer}"></div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var departureSelect = document.getElementById('departureSelect');
+    var adultInput = document.getElementById('adultCount');
+    var childInput = document.getElementById('childCount');
+    var infantInput = document.getElementById('infantCount');
+
+    function getSelectedDepartureData() {
+        var opt = departureSelect.options[departureSelect.selectedIndex];
+        return {
+            adult: parseInt(opt.dataset.adult) || 0,
+            child: parseInt(opt.dataset.child) || 0,
+            infant: parseInt(opt.dataset.infant) || 0
+        };
+    }
+
+    function formatPrice(num) {
+        return num.toLocaleString('vi-VN');
+    }
+
+    function updateSummary() {
+        var dep = getSelectedDepartureData();
+        var adults = parseInt(adultInput.value) || 0;
+        var children = parseInt(childInput.value) || 0;
+        var infants = parseInt(infantInput.value) || 0;
+
+        var adultTotal = adults * dep.adult;
+        var childTotal = children * dep.child;
+        var infantTotal = infants * dep.infant;
+        var total = adultTotal + childTotal + infantTotal;
+
+        document.getElementById('summaryAdult').textContent = adults + ' người lớn × ' + formatPrice(dep.adult) + 'đ';
+        document.getElementById('summaryAdultTotal').textContent = formatPrice(adultTotal) + 'đ';
+        document.getElementById('summaryChild').textContent = children + ' trẻ em × ' + formatPrice(dep.child) + 'đ';
+        document.getElementById('summaryChildTotal').textContent = formatPrice(childTotal) + 'đ';
+        document.getElementById('summaryInfant').textContent = infants + ' trẻ nhỏ × ' + formatPrice(dep.infant) + 'đ';
+        document.getElementById('summaryInfantTotal').textContent = formatPrice(infantTotal) + 'đ';
+        document.getElementById('summaryTotal').textContent = formatPrice(total) + 'đ';
+    }
+
+    departureSelect.addEventListener('change', updateSummary);
+    adultInput.addEventListener('input', updateSummary);
+    childInput.addEventListener('input', updateSummary);
+    infantInput.addEventListener('input', updateSummary);
+
+    updateSummary();
+});
+</script>
+</body>
+</html>

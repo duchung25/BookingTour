@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head th:replace="~{admin/fragments/head :: head('Cập nhật tour', null)}"></head>
+<body>
+<div th:replace="~{admin/fragments/sidebar :: sidebar}"></div>
+<div class="admin-main">
+    <div th:replace="~{admin/fragments/header :: header}"></div>
+    <main class="flex-grow-1 p-4">
+        <div th:replace="~{admin/fragments/breadcrumb :: breadcrumb('Cập nhật tour')}"></div>
+        <h4 class="fw-bold mb-4">✏️ Cập Nhật Tour</h4>
+
+        <!-- Flash Messages -->
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${errorMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <div class="card admin-card">
+            <div class="card-body p-4">
+                <form th:action="@{/admin/tours/update(id=${tour.id})}" method="post" th:object="${tourUpdateRequest}" enctype="multipart/form-data">
+                    <div class="row g-3">
+                        <div class="col-md-8">
+                            <label class="form-label fw-semibold">Tên tour <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" th:field="*{name}">
+                            <div th:if="${#fields.hasErrors('name')}" class="text-danger small" th:errors="*{name}"></div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Mã tour</label>
+                            <input type="text" class="form-control" th:value="${tour.code}" readonly>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Slug</label>
+                            <input type="text" class="form-control" th:field="*{slug}">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Danh mục <span class="text-danger">*</span></label>
+                            <select class="form-select" th:field="*{categoryId}">
+                                <option value="">Chọn danh mục</option>
+                                <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}"></option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Điểm đến <span class="text-danger">*</span></label>
+                            <select class="form-select" th:field="*{destinationId}">
+                                <option value="">Chọn điểm đến</option>
+                                <option th:each="dest : ${destinations}" th:value="${dest.id}" th:text="${dest.name}"></option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Nơi khởi hành <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" th:field="*{departureLocation}">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Thời gian</label>
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <input type="number" class="form-control" th:field="*{durationDays}" min="1">
+                                </div>
+                                <div class="col-6">
+                                    <input type="number" class="form-control" th:field="*{durationNights}" min="0">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Trạng thái</label>
+                            <select class="form-select" th:field="*{status}">
+                                <option value="ACTIVE">Đang mở</option>
+                                <option value="INACTIVE">Tạm ngưng</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Phương tiện</label>
+                            <input type="text" class="form-control" th:field="*{transport}">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Tiêu chuẩn khách sạn</label>
+                            <input type="text" class="form-control" th:field="*{hotelStandard}">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Ảnh tour</label>
+                            <div th:if="${tour.images != null && !tour.images.isEmpty()}" class="mb-2">
+                                <img th:src="${tour.images[0].imageUrl}" alt="Ảnh hiện tại" class="rounded shadow-sm" style="max-height:150px;">
+                                <small class="text-muted d-block mt-1">Ảnh hiện tại</small>
+                            </div>
+                            <input type="file" class="form-control" name="imageFile" accept="image/*" id="tourImageInput">
+                            <small class="text-muted">Để trống nếu không muốn thay đổi ảnh</small>
+                            <div class="mt-2" id="imagePreview" style="display:none">
+                                <img id="previewImg" src="" alt="Preview" class="rounded shadow-sm" style="max-height:200px;">
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">Mô tả tour</label>
+                            <textarea class="form-control" rows="3" th:field="*{description}"></textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Dịch vụ bao gồm</label>
+                            <textarea class="form-control" rows="3" th:field="*{includedServices}"></textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Dịch vụ không bao gồm</label>
+                            <textarea class="form-control" rows="3" th:field="*{excludedServices}"></textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Chính sách</label>
+                            <textarea class="form-control" rows="3" th:field="*{policy}"></textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Ghi chú</label>
+                            <textarea class="form-control" rows="3" th:field="*{notes}"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- ===== SECTION: Lịch Trình ===== -->
+                    <hr class="my-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold mb-0">📋 Lịch Trình Từng Ngày</h5>
+                        <button type="button" class="btn btn-outline-primary btn-sm" id="btnAddItinerary">+ Thêm ngày</button>
+                    </div>
+                    <div id="itineraryContainer">
+                        <!-- Pre-populate existing itineraries -->
+                        <div th:each="it, stat : ${tour.itineraries}" class="card bg-light border mb-2">
+                            <div class="card-body py-2 px-3">
+                                <div class="row g-2 align-items-center">
+                                    <div class="col-md-1">
+                                        <input type="number" th:name="'itineraries[' + ${stat.index} + '].dayNumber'"
+                                               th:value="${it.dayNumber}" class="form-control form-control-sm" min="1">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <input type="text" th:name="'itineraries[' + ${stat.index} + '].title'"
+                                               th:value="${it.title}" class="form-control form-control-sm">
+                                    </div>
+                                    <div class="col-md-7">
+                                        <input type="text" th:name="'itineraries[' + ${stat.index} + '].description'"
+                                               th:value="${it.description}" class="form-control form-control-sm">
+                                    </div>
+                                    <div class="col-md-1">
+                                        <button type="button" class="btn btn-outline-danger btn-sm w-100 btn-del-it">✕</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-muted small mt-2" id="noItineraryMsg"
+                       th:style="${tour.itineraries.isEmpty()} ? '' : 'display:none'">
+                        <em>Chưa có lịch trình. Bấm "Thêm ngày" để thêm.</em>
+                    </p>
+                    <!-- ===== END SECTION ===== -->
+
+                    <div class="mt-4 d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                        <a th:href="@{/admin/tours}" class="btn btn-outline-secondary">Hủy</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+    <div th:replace="~{admin/fragments/footer :: footer}"></div>
+</div>
+
+<script th:inline="javascript">
+document.addEventListener('DOMContentLoaded', function() {
+    // ===== Image Preview =====
+    var imageInput = document.getElementById('tourImageInput');
+    if (imageInput) {
+        imageInput.addEventListener('change', function(e) {
+            var file = e.target.files[0];
+            var preview = document.getElementById('imagePreview');
+            var previewImg = document.getElementById('previewImg');
+            if (file) {
+                var reader = new FileReader();
+                reader.onload = function(ev) {
+                    previewImg.src = ev.target.result;
+                    preview.style.display = '';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                preview.style.display = 'none';
+            }
+        });
+    }
+
+    // ===== Itinerary =====
+    const container = document.getElementById('itineraryContainer');
+    const addBtn = document.getElementById('btnAddItinerary');
+    const noMsg = document.getElementById('noItineraryMsg');
+    let rowCount = container.children.length;
+
+    // Bind existing delete buttons
+    container.querySelectorAll('.btn-del-it').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            btn.closest('.card').remove();
+            if (container.children.length === 0) noMsg.style.display = '';
+        });
+    });
+
+    addBtn.addEventListener('click', function() {
+        noMsg.style.display = 'none';
+        const idx = rowCount;
+        rowCount++;
+
+        const div = document.createElement('div');
+        div.className = 'card bg-light border mb-2';
+        div.innerHTML = '<div class="card-body py-2 px-3">' +
+            '<div class="row g-2 align-items-center">' +
+            '<div class="col-md-1"><input type="number" name="itineraries[' + idx + '].dayNumber" class="form-control form-control-sm" value="' + (idx + 1) + '" min="1"></div>' +
+            '<div class="col-md-3"><input type="text" name="itineraries[' + idx + '].title" class="form-control form-control-sm" placeholder="Tiêu đề ngày ' + (idx + 1) + '"></div>' +
+            '<div class="col-md-7"><input type="text" name="itineraries[' + idx + '].description" class="form-control form-control-sm" placeholder="Mô tả hoạt động..."></div>' +
+            '<div class="col-md-1"><button type="button" class="btn btn-outline-danger btn-sm w-100 btn-del-it">✕</button></div>' +
+            '</div></div>';
+        container.appendChild(div);
+
+        div.querySelector('.btn-del-it').addEventListener('click', function() {
+            div.remove();
+            if (container.children.length === 0) noMsg.style.display = '';
+        });
+    });
+});
+</script>
+</body>
+</html>

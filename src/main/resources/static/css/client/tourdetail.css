@@ -1,0 +1,52 @@
+/* ============================================================
+   TOUR DETAIL — Tropical Luxe
+   ============================================================ */
+@import url('tourdetail-departure.css');
+.tour-gallery img {
+    border-radius: var(--radius-xl);
+    width: 100%;
+    height: 420px;
+    object-fit: cover;
+    box-shadow: var(--shadow-md);
+}
+.tour-gallery-thumb img {
+    width: 100%;
+    height: 85px;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    opacity: 0.6;
+    transition: all var(--transition-fast);
+    border: 2px solid transparent;
+}
+.tour-gallery-thumb img:hover,
+.tour-gallery-thumb img.active {
+    opacity: 1;
+    border-color: var(--color-amber);
+    box-shadow: var(--shadow-sm);
+}
+.tour-info-card {
+    position: sticky;
+    top: 100px;
+}
+.itinerary-day {
+    border-left: 3px solid var(--color-ocean);
+    padding-left: 24px;
+    margin-bottom: 28px;
+    position: relative;
+}
+.itinerary-day::before {
+    content: '';
+    width: 14px;
+    height: 14px;
+    background: linear-gradient(135deg, var(--color-ocean), var(--color-teal));
+    border-radius: 50%;
+    position: absolute;
+    left: -8.5px;
+    top: 4px;
+    box-shadow: 0 0 0 4px rgba(11, 61, 94, 0.1);
+}
+.itinerary-day h6 {
+    font-family: var(--font-display);
+    color: var(--color-ocean);
+}

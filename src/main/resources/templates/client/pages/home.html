@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head th:replace="~{client/fragments/head :: head('Trang chủ', '/css/client/home.css')}"></head>
+<body>
+<!-- Header -->
+<div th:replace="~{client/fragments/header :: header}"></div>
+<!-- Navbar -->
+<div th:replace="~{client/fragments/navbar :: navbar}"></div>
+<!-- Hero Banner -->
+<div th:replace="~{client/fragments/herobanner :: herobanner}"></div>
+
+<!-- Search Bar -->
+<section class="container" style="margin-top:-50px;position:relative;z-index:10;">
+    <div th:replace="~{client/fragments/searchform :: searchform}"></div>
+</section>
+
+<!-- Tour Nổi Bật -->
+<section class="section-padding">
+    <div class="container">
+        <div class="text-center mb-5 reveal">
+            <span class="section-tag">🔥 Nổi bật</span>
+            <h2 class="section-title">Tour Du Lịch Được Yêu Thích Nhất</h2>
+            <p class="section-subtitle">Khám phá các tour du lịch được đánh giá cao nhất từ hàng nghìn du khách</p>
+        </div>
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+            <div class="col reveal" th:each="tour, iterStat : ${hotTours}"
+                 th:classappend="'reveal-delay-' + ${iterStat.count}">
+                <div class="card h-100 border-0 overflow-hidden tour-card-item">
+                    <div class="position-relative overflow-hidden">
+                        <img th:if="${!tour.images.isEmpty()}"
+                             th:src="@{${tour.images[0].imageUrl}}"
+                             class="card-img-top" th:alt="${tour.name}" style="height:220px;object-fit:cover;">
+                        <img th:if="${tour.images.isEmpty()}"
+                             th:src="@{/img/tour-phuquoc.png}"
+                             class="card-img-top" th:alt="${tour.name}" style="height:220px;object-fit:cover;">
+                        <span class="badge badge-hot position-absolute top-0 end-0 m-2"
+                              th:if="${iterStat.index == 0 || iterStat.index == 3}">HOT</span>
+                        <span class="badge badge-new position-absolute top-0 end-0 m-2"
+                              th:if="${iterStat.index == 2}">Mới</span>
+                        <span class="badge badge-duration position-absolute bottom-0 start-0 m-2"
+                              th:text="${tour.durationDays + 'N' + tour.durationNights + 'Đ'}"></span>
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <div class="d-flex align-items-center gap-2 mb-2 small" style="color:var(--color-text-muted);">
+                            <span style="color:var(--color-amber);font-weight:700;"
+                                  th:text="'★ ' + ${#numbers.formatDecimal(tour.averageRating, 1, 1)}">★ 4.9</span>
+                            <span>•</span>
+                            <span th:text="${tour.visibleReviewCount} + ' đánh giá'">0 đánh giá</span>
+                        </div>
+                        <h6 class="card-title fw-bold" th:text="${tour.name}">Tên tour</h6>
+                        <p class="small mb-2" style="color:var(--color-text-muted);">
+                            📍 <span th:text="${tour.destination.name}">Điểm đến</span>
+                        </p>
+                        <div class="mt-auto d-flex justify-content-between align-items-end">
+                            <div th:if="${!tour.departures.isEmpty()}">
+                                <del class="price-old"
+                                     th:text="${#numbers.formatDecimal(tour.departures[0].adultPrice * 1.25, 0, 'COMMA', 0, 'POINT') + 'đ'}"></del>
+                                <div class="price-current"
+                                     th:text="${#numbers.formatDecimal(tour.departures[0].adultPrice, 0, 'COMMA', 0, 'POINT') + 'đ'}"></div>
+                            </div>
+                            <div th:if="${tour.departures.isEmpty()}">
+                                <div class="price-current">Liên hệ</div>
+                            </div>
+                            <a th:href="@{/tours/detail(id=${tour.id})}" class="btn btn-view-tour">Xem →</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="text-center mt-5 reveal">
+            <a th:href="@{/tours}" class="btn btn-outline-luxe px-5" style="color:var(--color-ocean);border-color:var(--color-ocean);">Xem tất cả tour →</a>
+        </div>
+    </div>
+</section>
+
+<!-- Điểm Đến Phổ Biến -->
+<section class="section-padding bg-sand">
+    <div class="container">
+        <div class="text-center mb-5 reveal">
+            <span class="section-tag">📍 Điểm đến</span>
+            <h2 class="section-title">Điểm Đến Phổ Biến Nhất</h2>
+            <p class="section-subtitle">Những địa danh du lịch hấp dẫn nhất Việt Nam đang chờ bạn khám phá</p>
+        </div>
+        <div class="row g-4">
+            <div th:each="dest, iterStat : ${destinations}"
+                 th:classappend="${iterStat.index < 3 ? 'col-lg-4 col-md-6' : 'col-lg-3 col-md-6'}"
+                 class="reveal"
+                 th:attrappend="class=${' reveal-delay-' + ((iterStat.index % 4) + 1)}">
+                <div class="dest-card shadow-sm" style="cursor:pointer;"
+                     th:onclick="'window.location.href=\'/tours?destinationId=' + ${dest.id} + '\''">
+                    <img th:if="${dest.imageUrl != null && !dest.imageUrl.isEmpty()}"
+                         th:src="@{${dest.imageUrl}}" th:alt="${dest.name}">
+                    <img th:if="${dest.imageUrl == null || dest.imageUrl.isEmpty()}"
+                         th:src="@{/img/tour-phuquoc.png}" th:alt="${dest.name}">
+                    <div class="dest-overlay">
+                        <h5 class="fw-bold mb-1" th:text="${dest.name}">Điểm đến</h5>
+                        <small class="opacity-75"
+                               th:text="${dest.tours.size()} + ' tour'">0 tour</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Tại Sao Chọn Traveler -->
+<section class="section-padding">
+    <div class="container">
+        <div class="text-center mb-5 reveal">
+            <span class="section-tag">💎 Vì sao chọn chúng tôi</span>
+            <h2 class="section-title">Traveler — Đối Tác Du Lịch Đáng Tin Cậy</h2>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-3 reveal reveal-delay-1">
+                <div class="category-card h-100">
+                    <div class="category-icon">🛡️</div>
+                    <h6 class="fw-bold" style="color:var(--color-ocean);">Đảm Bảo Giá Tốt</h6>
+                    <p class="small mb-0" style="color:var(--color-text-muted);">Cam kết hoàn tiền nếu tìm thấy giá thấp hơn cho cùng dịch vụ</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3 reveal reveal-delay-2">
+                <div class="category-card h-100">
+                    <div class="category-icon">⭐</div>
+                    <h6 class="fw-bold" style="color:var(--color-ocean);">Dịch Vụ 5 Sao</h6>
+                    <p class="small mb-0" style="color:var(--color-text-muted);">Đội ngũ chuyên nghiệp, hỗ trợ 24/7 trong suốt hành trình</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3 reveal reveal-delay-3">
+                <div class="category-card h-100">
+                    <div class="category-icon">🔒</div>
+                    <h6 class="fw-bold" style="color:var(--color-ocean);">Thanh Toán An Toàn</h6>
+                    <p class="small mb-0" style="color:var(--color-text-muted);">Bảo mật thông tin thanh toán với công nghệ mã hóa tiên tiến</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3 reveal reveal-delay-4">
+                <div class="category-card h-100">
+                    <div class="category-icon">🎯</div>
+                    <h6 class="fw-bold" style="color:var(--color-ocean);">Lịch Trình Tối Ưu</h6>
+                    <p class="small mb-0" style="color:var(--color-text-muted);">Được thiết kế bởi chuyên gia, tối ưu trải nghiệm mỗi phút</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Tour Khuyến Mãi -->
+<section class="section-padding bg-cream">
+    <div class="container">
+        <div class="text-center mb-5 reveal">
+            <span class="section-tag">🎉 Khuyến mãi</span>
+            <h2 class="section-title">Tour Giảm Giá Đặc Biệt</h2>
+            <p class="section-subtitle">Cơ hội vàng để khám phá Việt Nam với mức giá ưu đãi nhất năm</p>
+        </div>
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            <div class="col reveal" th:each="tour, iterStat : ${promoTours}"
+                 th:classappend="'reveal-delay-' + ${iterStat.count}">
+                <div class="card h-100 border-0 overflow-hidden tour-card-item">
+                    <div class="position-relative overflow-hidden">
+                        <img th:if="${!tour.images.isEmpty()}"
+                             th:src="@{${tour.images[0].imageUrl}}"
+                             class="card-img-top" style="height:220px;object-fit:cover;" th:alt="${tour.name}">
+                        <img th:if="${tour.images.isEmpty()}"
+                             th:src="@{/img/tour-phuquoc.png}"
+                             class="card-img-top" style="height:220px;object-fit:cover;" th:alt="${tour.name}">
+                        <span class="badge badge-hot position-absolute top-0 end-0 m-2 fs-6">-30%</span>
+                    </div>
+                    <div class="card-body">
+                        <h6 class="card-title fw-bold" th:text="${tour.name}">Tên tour</h6>
+                        <p class="small" style="color:var(--color-text-muted);">
+                            📍 <span th:text="${tour.destination.name}">Điểm đến</span> ·
+                            <span th:text="${tour.durationDays + 'N' + tour.durationNights + 'Đ'}">3N2Đ</span> ·
+                            <span th:text="'★ ' + ${#numbers.formatDecimal(tour.averageRating, 1, 1)}">★ 4.7</span>
+                        </p>
+                        <span th:if="${!tour.departures.isEmpty()}">
+                            <del class="price-old"
+                                 th:text="${#numbers.formatDecimal(tour.departures[0].adultPrice * 1.25, 0, 'COMMA', 0, 'POINT') + 'đ'}"></del>
+                            <span class="price-current ms-2"
+                                  th:text="${#numbers.formatDecimal(tour.departures[0].adultPrice, 0, 'COMMA', 0, 'POINT') + 'đ'}"></span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Phản Hồi Khách Hàng -->
+<section class="section-padding">
+    <div class="container">
+        <div class="text-center mb-5 reveal">
+            <span class="section-tag">💬 Phản hồi</span>
+            <h2 class="section-title">Khách Hàng Nói Gì Về Chúng Tôi</h2>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4 reveal" th:each="review, iterStat : ${reviews}"
+                 th:classappend="'reveal-delay-' + ${iterStat.count}">
+                <div class="card border-0 p-4 review-card h-100">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div class="review-avatar"
+                             th:text="${review.user.fullName != null ? review.user.fullName.substring(0,1).toUpperCase() : '?'}">?</div>
+                        <div>
+                            <h6 class="mb-0 fw-bold" style="color:var(--color-ocean);"
+                                th:text="${review.user.fullName}">Tên khách</h6>
+                            <small style="color:var(--color-text-muted);"
+                                   th:text="'Tour ' + ${review.tour.name}">Tour ...</small>
+                        </div>
+                    </div>
+                    <div style="color:var(--color-amber);" class="mb-2">
+                        <th:block th:each="i : ${#numbers.sequence(1, 5)}">
+                            <span th:if="${i <= review.rating}">★</span>
+                            <span th:if="${i > review.rating}" style="opacity:0.3;">☆</span>
+                        </th:block>
+                    </div>
+                    <p class="small mb-0" style="color:var(--color-text-muted);"
+                       th:text="'&quot;' + ${review.content} + '&quot;'">"Nội dung đánh giá"</p>
+                </div>
+            </div>
+            <!-- Fallback nếu chưa có review -->
+            <div th:if="${#lists.isEmpty(reviews)}" class="text-center py-4">
+                <p class="text-muted">Chưa có đánh giá nào. Hãy là người đầu tiên trải nghiệm và đánh giá!</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section text-center">
+    <div class="container py-4 position-relative" style="z-index:1;">
+        <h2 class="fw-bold display-6 mb-3 reveal">Bạn Đã Sẵn Sàng Lên Đường?</h2>
+        <p class="lead opacity-75 mb-4 reveal reveal-delay-1">Đăng ký ngay để nhận ưu đãi đặc biệt và cùng Traveler khám phá thế giới</p>
+        <div class="d-flex justify-content-center gap-3 reveal reveal-delay-2">
+            <a th:href="@{/register}" class="btn btn-primary-luxe btn-lg px-5">Đăng ký ngay</a>
+            <a th:href="@{/tours}" class="btn btn-outline-luxe btn-lg px-5">Xem tour</a>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<div th:replace="~{client/fragments/footer :: footer}"></div>
+<script th:src="@{/js/homepage.js}"></script>
+</body>
+</html>

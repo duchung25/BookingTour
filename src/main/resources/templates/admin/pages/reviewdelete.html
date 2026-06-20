@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head th:replace="~{admin/fragments/head :: head('Xóa đánh giá', null)}"></head>
+<body>
+<div th:replace="~{admin/fragments/sidebar :: sidebar}"></div>
+<div class="admin-main">
+    <div th:replace="~{admin/fragments/header :: header}"></div>
+    <main class="flex-grow-1 p-4">
+        <div th:replace="~{admin/fragments/breadcrumb :: breadcrumb('Xóa đánh giá')}"></div>
+        <h4 class="fw-bold mb-4">🗑️ Xóa Đánh Giá</h4>
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm rounded-4 p-5 text-center">
+                    <div class="fs-1 mb-3">⚠️</div>
+                    <h5 class="fw-bold">Xác nhận xóa đánh giá?</h5>
+                    <div class="card bg-light border-0 rounded-3 p-3 my-3 text-start small">
+                        <div class="mb-1"><strong>Tour:</strong> <span th:text="${review.tour.name}">Tour</span></div>
+                        <div class="mb-1"><strong>Khách:</strong> <span th:text="${review.user.fullName}">Khách</span></div>
+                        <div class="mb-1"><strong>Sao:</strong>
+                            <span class="text-warning" th:text="${'★'.repeat(review.rating)}">★</span>
+                        </div>
+                        <div class="mb-1" th:if="${review.title}"><strong>Tiêu đề:</strong> <span th:text="${review.title}">Tiêu đề</span></div>
+                        <div><strong>Nội dung:</strong> <span th:text="${review.content}">Nội dung</span></div>
+                    </div>
+                    <div class="alert alert-warning small">
+                        ⚠️ Hành động này sẽ xóa <strong>vĩnh viễn</strong> đánh giá khỏi hệ thống và không thể hoàn tác.
+                    </div>
+                    <form th:action="@{/admin/reviews/delete(id=${review.id})}" method="post">
+                        <div class="d-flex gap-3 justify-content-center">
+                            <button type="submit" class="btn btn-danger px-4">Xác nhận xóa</button>
+                            <a th:href="@{/admin/reviews}" class="btn btn-outline-secondary px-4">Hủy bỏ</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+    <div th:replace="~{admin/fragments/footer :: footer}"></div>
+</div>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<nav th:fragment="pagination" aria-label="Phân trang" class="mt-4"
+     th:with="baseUrl=@{/tours(keyword=${keyword},destinationId=${destinationId},categoryId=${categoryId},minDuration=${minDuration},maxDuration=${maxDuration})}">
+    <ul class="pagination justify-content-center">
+        <!-- Previous -->
+        <li class="page-item" th:classappend="${tourPage.first} ? 'disabled'">
+            <a class="page-link"
+               th:href="@{${baseUrl}(page=${tourPage.number - 1})}"
+               th:if="${!tourPage.first}">← Trước</a>
+            <span class="page-link" th:if="${tourPage.first}">← Trước</span>
+        </li>
+
+        <!-- Page numbers -->
+        <th:block th:with="total=${tourPage.totalPages}, current=${tourPage.number}">
+            <!-- First page -->
+            <li class="page-item" th:classappend="${current == 0} ? 'active'">
+                <a class="page-link" th:href="@{${baseUrl}(page=0)}">1</a>
+            </li>
+
+            <!-- Ellipsis after first -->
+            <li class="page-item disabled" th:if="${current > 3}">
+                <span class="page-link">...</span>
+            </li>
+
+            <!-- Pages around current -->
+            <th:block th:each="i : ${#numbers.sequence(T(java.lang.Math).max(1, current - 1), T(java.lang.Math).min(total - 2, current + 1))}">
+                <li class="page-item" th:classappend="${i == current} ? 'active'">
+                    <a class="page-link" th:href="@{${baseUrl}(page=${i})}" th:text="${i + 1}"></a>
+                </li>
+            </th:block>
+
+            <!-- Ellipsis before last -->
+            <li class="page-item disabled" th:if="${current < total - 3}">
+                <span class="page-link">...</span>
+            </li>
+
+            <!-- Last page (if more than 1 page) -->
+            <th:block th:if="${total > 1}">
+                <li class="page-item" th:classappend="${current == total - 1} ? 'active'">
+                    <a class="page-link" th:href="@{${baseUrl}(page=${total - 1})}"
+                       th:text="${total}"></a>
+                </li>
+            </th:block>
+        </th:block>
+
+        <!-- Next -->
+        <li class="page-item" th:classappend="${tourPage.last} ? 'disabled'">
+            <a class="page-link"
+               th:href="@{${baseUrl}(page=${tourPage.number + 1})}"
+               th:if="${!tourPage.last}">Sau →</a>
+            <span class="page-link" th:if="${tourPage.last}">Sau →</span>
+        </li>
+    </ul>
+</nav>
+</html>

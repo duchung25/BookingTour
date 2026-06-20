@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head th:replace="~{client/fragments/head :: head('Đánh giá tour', null)}"></head>
+<body>
+<div th:replace="~{client/fragments/header :: header}"></div>
+<div th:replace="~{client/fragments/navbar :: navbar}"></div>
+<section class="py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-7">
+                <div class="card border-0 shadow-sm rounded-4 p-5">
+                    <h3 class="fw-bold mb-2 text-center">⭐ Đánh Giá Tour</h3>
+                    <p class="text-muted text-center mb-4">Chia sẻ trải nghiệm của bạn về chuyến đi</p>
+
+                    <!-- Error message -->
+                    <div th:if="${errorMessage}" class="alert alert-danger mb-3">
+                        <span th:text="${errorMessage}"></span>
+                    </div>
+
+                    <!-- Tour info card -->
+                    <div class="card bg-light border-0 rounded-3 p-3 mb-4">
+                        <div class="d-flex gap-3 align-items-center">
+                            <img th:if="${!booking.tourDeparture.tour.images.isEmpty()}"
+                                 th:src="@{${booking.tourDeparture.tour.images[0].imageUrl}}"
+                                 alt="Tour" class="rounded" style="width:70px;height:50px;object-fit:cover;">
+                            <div>
+                                <h6 class="fw-bold mb-0" th:text="${booking.tourDeparture.tour.name}">Tên tour</h6>
+                                <small class="text-muted"
+                                       th:text="${booking.tourDeparture.tour.durationDays + 'N' + booking.tourDeparture.tour.durationNights + 'Đ' + ' • ' + #temporals.format(booking.tourDeparture.departureDate, 'dd/MM/yyyy') + ' • Mã đơn: ' + booking.bookingCode}">
+                                    4N3Đ • 15/04/2026 • Mã đơn: BK-XXX
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form th:action="@{/review/create}" method="post" id="reviewForm">
+                        <input type="hidden" name="bookingId" th:value="${booking.id}">
+                        <input type="hidden" name="rating" id="ratingInput" value="5">
+
+                        <!-- Star rating -->
+                        <div class="mb-4 text-center">
+                            <label class="form-label fw-semibold d-block">Đánh giá sao <span class="text-danger">*</span></label>
+                            <div class="fs-2" id="starRating" style="cursor:pointer;">
+                                <span class="star text-warning" data-value="1">★</span>
+                                <span class="star text-warning" data-value="2">★</span>
+                                <span class="star text-warning" data-value="3">★</span>
+                                <span class="star text-warning" data-value="4">★</span>
+                                <span class="star text-warning" data-value="5">★</span>
+                            </div>
+                            <small class="text-muted" id="ratingText">Tuyệt vời (5/5)</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Tiêu đề đánh giá</label>
+                            <input type="text" class="form-control" name="title" maxlength="150"
+                                   placeholder="VD: Chuyến đi tuyệt vời!">
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">Nội dung đánh giá <span class="text-danger">*</span></label>
+                            <textarea class="form-control" name="content" rows="5" required minlength="1"
+                                      placeholder="Chia sẻ chi tiết trải nghiệm của bạn: dịch vụ, hướng dẫn viên, ăn uống, khách sạn..."></textarea>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg flex-grow-1">Gửi đánh giá</button>
+                            <a th:href="@{/booking/history}" class="btn btn-outline-secondary btn-lg">Hủy</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div th:replace="~{client/fragments/footer :: footer}"></div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var stars = document.querySelectorAll('#starRating .star');
+    var ratingInput = document.getElementById('ratingInput');
+    var ratingText = document.getElementById('ratingText');
+    var currentRating = 5;
+
+    var labels = {1: 'Rất tệ', 2: 'Tệ', 3: 'Trung bình', 4: 'Tốt', 5: 'Tuyệt vời'};
+
+    function updateStars(rating) {
+        currentRating = rating;
+        ratingInput.value = rating;
+        ratingText.textContent = labels[rating] + ' (' + rating + '/5)';
+        stars.forEach(function(star) {
+            var val = parseInt(star.dataset.value);
+            star.classList.toggle('text-warning', val <= rating);
+            star.classList.toggle('text-secondary', val > rating);
+        });
+    }
+
+    stars.forEach(function(star) {
+        star.addEventListener('click', function() {
+            updateStars(parseInt(this.dataset.value));
+        });
+        star.addEventListener('mouseenter', function() {
+            var hoverVal = parseInt(this.dataset.value);
+            stars.forEach(function(s) {
+                var v = parseInt(s.dataset.value);
+                s.classList.toggle('text-warning', v <= hoverVal);
+                s.classList.toggle('text-secondary', v > hoverVal);
+            });
+        });
+    });
+
+    document.getElementById('starRating').addEventListener('mouseleave', function() {
+        updateStars(currentRating);
+    });
+
+    updateStars(5);
+});
+</script>
+</body>
+</html>

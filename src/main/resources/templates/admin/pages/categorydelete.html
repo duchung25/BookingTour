@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head th:replace="~{admin/fragments/head :: head('Xóa danh mục tour', null)}"></head>
+<body>
+<div th:replace="~{admin/fragments/sidebar :: sidebar}"></div>
+<div class="admin-main">
+    <div th:replace="~{admin/fragments/header :: header}"></div>
+    <main class="flex-grow-1 p-4">
+        <div th:replace="~{admin/fragments/breadcrumb :: breadcrumb('Xóa danh mục')}"></div>
+        <h4 class="fw-bold mb-4">🗑️ Xóa Danh Mục Tour</h4>
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm rounded-4 p-5 text-center">
+                    <div class="fs-1 mb-3">⚠️</div>
+                    <h5 class="fw-bold">Xác nhận xóa danh mục?</h5>
+                    <div class="card bg-light border-0 rounded-3 p-3 my-3 text-start small">
+                        <div class="mb-1"><strong>Tên:</strong> <span th:text="${category.name}">Tên</span></div>
+                        <div class="mb-1"><strong>Mô tả:</strong> <span th:text="${category.description}">Mô tả</span></div>
+                        <div><strong>Số tour đang dùng:</strong> <span th:text="${tourCount}">0</span></div>
+                    </div>
+                    <div th:if="${tourCount > 0}" class="alert alert-warning small">
+                        ⚠️ Có <strong th:text="${tourCount}">N</strong> tour đang dùng danh mục này. Hệ thống sẽ chuyển sang <strong>INACTIVE</strong> (xóa mềm) thay vì xóa thật.
+                    </div>
+                    <div th:if="${tourCount == 0}" class="alert alert-danger small">
+                        ⚠️ Danh mục sẽ bị <strong>xóa vĩnh viễn</strong> và không thể hoàn tác.
+                    </div>
+                    <form th:action="@{/admin/categories/delete(id=${category.id})}" method="post">
+                        <div class="d-flex gap-3 justify-content-center">
+                            <button type="submit" class="btn btn-danger px-4">Xác nhận</button>
+                            <a th:href="@{/admin/categories}" class="btn btn-outline-secondary px-4">Hủy bỏ</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+    <div th:replace="~{admin/fragments/footer :: footer}"></div>
+</div>
+</body>
+</html>

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head th:replace="~{client/fragments/head :: head('Chi tiết đơn đặt', null)}"></head>
+<body>
+<div th:replace="~{client/fragments/header :: header}"></div>
+<div th:replace="~{client/fragments/navbar :: navbar}"></div>
+<section class="py-5">
+    <div class="container">
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a th:href="@{/booking/history}" class="text-decoration-none" style="color:var(--color-ocean);">Lịch sử đặt tour</a></li>
+                <li class="breadcrumb-item active" th:text="'Chi tiết đơn ' + ${booking.bookingCode}">Chi tiết đơn</li>
+            </ol>
+        </nav>
+
+        <h3 class="fw-bold mb-4" th:text="'📋 Chi Tiết Đơn Đặt Tour ' + ${booking.bookingCode}">📋 Chi Tiết Đơn</h3>
+
+        <!-- Success/Error messages -->
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${successMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${errorMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <!-- Tour info -->
+                <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
+                    <h5 class="fw-bold mb-3">🗺️ Tour du lịch</h5>
+                    <div class="d-flex gap-3">
+                        <img th:if="${!booking.tourDeparture.tour.images.isEmpty()}"
+                             th:src="@{${booking.tourDeparture.tour.images[0].imageUrl}}"
+                             alt="Tour" class="rounded-3" style="width:120px;height:80px;object-fit:cover;">
+                        <img th:if="${booking.tourDeparture.tour.images.isEmpty()}"
+                             th:src="@{/img/tour-phuquoc.png}"
+                             alt="Tour" class="rounded-3" style="width:120px;height:80px;object-fit:cover;">
+                        <div>
+                            <h6 class="fw-bold">
+                                <a th:href="@{/tours/detail(id=${booking.tourDeparture.tour.id})}"
+                                   class="text-decoration-none"
+                                   th:text="${booking.tourDeparture.tour.name}">Tên tour</a>
+                            </h6>
+                            <p class="text-muted small mb-0">
+                                <span th:text="'📍 ' + ${booking.tourDeparture.tour.destination.name}">📍 Điểm đến</span>
+                                <span th:text="' • ' + ${booking.tourDeparture.tour.durationDays} + ' ngày ' + ${booking.tourDeparture.tour.durationNights} + ' đêm'"> • 4 ngày 3 đêm</span>
+                                <span th:if="${booking.tourDeparture.tour.transport != null}"
+                                      th:text="' • ' + ${booking.tourDeparture.tour.transport}"> • Máy bay</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact info -->
+                <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
+                    <h5 class="fw-bold mb-3">👤 Thông tin liên hệ</h5>
+                    <div class="row small">
+                        <div class="col-md-6 mb-2"><strong>Họ tên:</strong> <span th:text="${booking.contactName}">Họ tên</span></div>
+                        <div class="col-md-6 mb-2"><strong>Email:</strong> <span th:text="${booking.contactEmail}">Email</span></div>
+                        <div class="col-md-6 mb-2"><strong>Điện thoại:</strong> <span th:text="${booking.contactPhone}">SĐT</span></div>
+                    </div>
+                </div>
+
+                <!-- Travelers alert -->
+                <div th:if="${booking.bookingStatus == 'PENDING' and booking.travelers.isEmpty()}"
+                     class="alert alert-warning mb-4">
+                    <strong>⚠️ Chưa có danh sách hành khách!</strong>
+                    <p class="mb-2 small">Bạn cần bổ sung thông tin hành khách để admin có thể xác nhận đơn đặt tour.</p>
+                    <a th:href="@{/booking/travelers(id=${booking.id})}" class="btn btn-warning btn-sm">👥 Cập nhật hành khách ngay</a>
+                </div>
+
+                <!-- Travelers -->
+                <div class="card border-0 shadow-sm rounded-4 p-4 mb-4" th:if="${!booking.travelers.isEmpty()}">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold mb-0">👥 Danh sách hành khách</h5>
+                        <a th:if="${booking.bookingStatus == 'PENDING'}"
+                           th:href="@{/booking/travelers(id=${booking.id})}"
+                           class="btn btn-outline-primary btn-sm">✏️ Sửa</a>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead class="table-light">
+                                <tr><th>#</th><th>Họ tên</th><th>Loại</th><th>Giới tính</th><th>Ngày sinh</th><th>CMND/CCCD</th><th>Quốc tịch</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="traveler, idx : ${booking.travelers}">
+                                    <td th:text="${idx.count}">1</td>
+                                    <td th:text="${traveler.fullName}">Họ tên</td>
+                                    <td>
+                                        <span th:if="${traveler.travelerType == 'ADULT'}" class="badge bg-primary">Người lớn</span>
+                                        <span th:if="${traveler.travelerType == 'CHILD'}" class="badge bg-info">Trẻ em</span>
+                                        <span th:if="${traveler.travelerType == 'INFANT'}" class="badge bg-warning text-dark">Trẻ nhỏ</span>
+                                    </td>
+                                    <td>
+                                        <span th:if="${traveler.gender == 'MALE'}">Nam</span>
+                                        <span th:if="${traveler.gender == 'FEMALE'}">Nữ</span>
+                                        <span th:if="${traveler.gender == null or traveler.gender == ''}">—</span>
+                                    </td>
+                                    <td th:text="${traveler.dateOfBirth != null ? #temporals.format(traveler.dateOfBirth, 'dd/MM/yyyy') : '—'}">—</td>
+                                    <td th:text="${traveler.identityNumber != null and !traveler.identityNumber.isEmpty() ? traveler.identityNumber : '—'}">—</td>
+                                    <td th:text="${traveler.nationality != null and !traveler.nationality.isEmpty() ? traveler.nationality : '—'}">—</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Special requests -->
+                <div class="card border-0 shadow-sm rounded-4 p-4" th:if="${booking.specialRequests != null and !booking.specialRequests.isEmpty()}">
+                    <h5 class="fw-bold mb-3">📝 Ghi chú / Yêu cầu đặc biệt</h5>
+                    <p class="mb-0 small" th:text="${booking.specialRequests}">Ghi chú</p>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-lg-4">
+                <div class="card border-0 shadow rounded-4 p-4 sticky-top" style="top:90px;">
+                    <h6 class="fw-bold mb-3">Thông tin đơn</h6>
+                    <div class="small">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Mã đơn:</span>
+                            <strong th:text="${booking.bookingCode}">BK-XXX</strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Ngày đặt:</span>
+                            <strong th:text="${#temporals.format(booking.createdAt, 'dd/MM/yyyy HH:mm')}">01/01/2026</strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Khởi hành:</span>
+                            <strong th:text="${#temporals.format(booking.tourDeparture.departureDate, 'dd/MM/yyyy')}">15/04/2026</strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Trạng thái:</span>
+                            <span th:if="${booking.bookingStatus == 'PENDING'}" class="badge bg-warning text-dark rounded-pill">Chờ xác nhận</span>
+                            <span th:if="${booking.bookingStatus == 'CONFIRMED'}" class="badge bg-success rounded-pill">Đã xác nhận</span>
+                            <span th:if="${booking.bookingStatus == 'COMPLETED'}" class="badge bg-info text-dark rounded-pill">Đã hoàn thành</span>
+                            <span th:if="${booking.bookingStatus == 'CANCELLED'}" class="badge bg-danger rounded-pill">Đã hủy</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Thanh toán:</span>
+                            <span th:if="${booking.paymentStatus == 'PAID'}" class="badge bg-success rounded-pill">Đã thanh toán</span>
+                            <span th:if="${booking.paymentStatus == 'UNPAID'}" class="badge bg-secondary rounded-pill">Chưa thanh toán</span>
+                            <span th:if="${booking.paymentStatus != 'PAID' and booking.paymentStatus != 'UNPAID'}"
+                                  class="badge bg-secondary rounded-pill" th:text="${booking.paymentStatus}">Khác</span>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="small">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span th:text="${booking.adultCount + ' người lớn'}">2 người lớn</span>
+                            <strong th:text="${#numbers.formatDecimal(booking.tourDeparture.adultPrice.multiply(T(java.math.BigDecimal).valueOf(booking.adultCount)), 0, 'COMMA', 0, 'POINT') + 'đ'}">0đ</strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-1" th:if="${booking.childCount > 0}">
+                            <span th:text="${booking.childCount + ' trẻ em'}">1 trẻ em</span>
+                            <strong th:text="${booking.tourDeparture.childPrice != null ? #numbers.formatDecimal(booking.tourDeparture.childPrice.multiply(T(java.math.BigDecimal).valueOf(booking.childCount)), 0, 'COMMA', 0, 'POINT') + 'đ' : '0đ'}">0đ</strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-1" th:if="${booking.infantCount > 0}">
+                            <span th:text="${booking.infantCount + ' trẻ nhỏ'}">0 trẻ nhỏ</span>
+                            <strong th:text="${booking.tourDeparture.infantPrice != null ? #numbers.formatDecimal(booking.tourDeparture.infantPrice.multiply(T(java.math.BigDecimal).valueOf(booking.infantCount)), 0, 'COMMA', 0, 'POINT') + 'đ' : '0đ'}">0đ</strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-1 text-success" th:if="${booking.discountAmount.compareTo(T(java.math.BigDecimal).ZERO) > 0}">
+                            <span>Giảm giá</span>
+                            <strong th:text="${'-' + #numbers.formatDecimal(booking.discountAmount, 0, 'COMMA', 0, 'POINT') + 'đ'}">-0đ</strong>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between fw-bold fs-5">
+                        <span>Tổng cộng</span>
+                        <span class="text-primary" th:text="${#numbers.formatDecimal(booking.finalAmount, 0, 'COMMA', 0, 'POINT') + 'đ'}">0đ</span>
+                    </div>
+
+                    <!-- Action buttons -->
+                    <div class="mt-4 d-grid gap-2">
+                        <a th:if="${booking.bookingStatus == 'PENDING'}"
+                           th:href="@{/booking/travelers(id=${booking.id})}"
+                           class="btn btn-info">👥 Cập nhật hành khách</a>
+                        <a th:if="${(booking.bookingStatus == 'PENDING' or booking.bookingStatus == 'CONFIRMED') and booking.paymentStatus != 'PAID'}"
+                           th:href="@{/payment(bookingId=${booking.id})}"
+                           class="btn btn-success">💳 Thanh toán</a>
+                        <a th:if="${booking.bookingStatus == 'PENDING'}"
+                           th:href="@{/booking/edit(id=${booking.id})}"
+                           class="btn btn-outline-primary">✏️ Sửa đơn</a>
+                        <a th:if="${booking.bookingStatus == 'PENDING' or booking.bookingStatus == 'CONFIRMED'}"
+                           th:href="@{/booking/cancel(id=${booking.id})}"
+                           class="btn btn-outline-danger">❌ Hủy đơn</a>
+                        <a th:href="@{/booking/history}" class="btn btn-outline-secondary">← Quay lại</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div th:replace="~{client/fragments/footer :: footer}"></div>
+</body>
+</html>

@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head th:replace="~{client/fragments/head :: head('Chi tiết tour', '/css/client/tourdetail.css')}"></head>
+<body>
+<div th:replace="~{client/fragments/header :: header}"></div>
+<div th:replace="~{client/fragments/navbar :: navbar}"></div>
+
+<section class="py-5">
+    <div class="container">
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a th:href="@{/}" class="text-decoration-none" style="color:var(--color-ocean);">Trang chủ</a></li>
+                <li class="breadcrumb-item"><a th:href="@{/tours}" class="text-decoration-none" style="color:var(--color-ocean);">Tour du lịch</a></li>
+                <li class="breadcrumb-item active" style="color:var(--color-text-muted);" th:text="${tour.name}">Tên tour</li>
+            </ol>
+        </nav>
+
+        <div class="row g-4">
+            <!-- Left: Tour info -->
+            <div class="col-lg-8">
+                <!-- Gallery -->
+                <div class="tour-gallery mb-4">
+                    <img th:if="${!tour.images.isEmpty()}"
+                         th:src="@{${tour.images[0].imageUrl}}"
+                         th:alt="${tour.name}"
+                         id="mainImage">
+                    <img th:if="${tour.images.isEmpty()}"
+                         th:src="@{/img/tour-phuquoc.png}"
+                         th:alt="${tour.name}"
+                         id="mainImage">
+                </div>
+                <div class="row g-2 tour-gallery-thumb mb-4" th:if="${tour.images.size() > 1}">
+                    <div class="col-3" th:each="img, iterStat : ${tour.images}" th:if="${iterStat.index < 4}">
+                        <img th:src="@{${img.imageUrl}}"
+                             th:alt="${img.altText}"
+                             th:classappend="${iterStat.index == 0 ? 'active' : ''}"
+                             th:attr="data-full=${img.imageUrl}"
+                             onclick="selectThumb(this)">
+                    </div>
+                </div>
+
+                <!-- Title & Quick Info -->
+                <h2 class="fw-bold mb-2" th:text="${tour.name}">Tên tour</h2>
+                <div class="d-flex flex-wrap gap-3 mb-4 text-muted">
+                    <span>📍 <span th:text="${tour.destination.name}">Điểm đến</span></span>
+                    <span>⏱️ <span th:text="${tour.durationDays + ' ngày ' + tour.durationNights + ' đêm'}">4 ngày 3 đêm</span></span>
+                    <span th:if="${tour.transport != null}">✈️ <span th:text="${tour.transport}">Phương tiện</span></span>
+                    <span style="color:var(--color-amber);" class="fw-bold">
+                        ★ <span th:text="${avgRating}">0</span>
+                        (<span th:text="${reviewCount}">0</span> đánh giá)
+                    </span>
+                </div>
+
+                <!-- Description -->
+                <div class="glass-card p-4 mb-4" th:if="${tour.description != null}">
+                    <h5 class="fw-bold mb-3" style="color:var(--color-ocean);">📋 Mô tả tour</h5>
+                    <div th:utext="${tour.description}"></div>
+                </div>
+
+                <!-- Included / Excluded Services -->
+                <div class="glass-card p-4 mb-4" th:if="${tour.includedServices != null || tour.excludedServices != null}">
+                    <h5 class="fw-bold mb-3" style="color:var(--color-ocean);">✨ Dịch vụ</h5>
+                    <div class="row">
+                        <div class="col-md-6" th:if="${tour.includedServices != null}">
+                            <h6 class="fw-bold text-success">✅ Bao gồm</h6>
+                            <div th:utext="${tour.includedServices}"></div>
+                        </div>
+                        <div class="col-md-6" th:if="${tour.excludedServices != null}">
+                            <h6 class="fw-bold text-danger">❌ Không bao gồm</h6>
+                            <div th:utext="${tour.excludedServices}"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Itinerary -->
+                <div class="glass-card p-4 mb-4" th:if="${!tour.itineraries.isEmpty()}">
+                    <h5 class="fw-bold mb-4" style="color:var(--color-ocean);">📅 Lịch trình tour</h5>
+                    <div class="itinerary-day" th:each="it : ${tour.itineraries}">
+                        <h6 class="fw-bold text-primary"
+                            th:text="'Ngày ' + ${it.dayNumber} + ': ' + ${it.title}">Ngày 1: Tiêu đề</h6>
+                        <p class="text-muted small mb-0" th:utext="${it.description}">Mô tả lịch trình</p>
+                        <small class="text-muted" th:if="${it.meals != null}" th:text="'🍜 ' + ${it.meals}"></small>
+                        <small class="text-muted d-block" th:if="${it.accommodation != null}" th:text="'🏨 ' + ${it.accommodation}"></small>
+                    </div>
+                </div>
+
+                <!-- Policy -->
+                <div class="glass-card p-4 mb-4" th:if="${tour.policy != null}">
+                    <h5 class="fw-bold mb-3" style="color:var(--color-ocean);">📜 Chính sách tour</h5>
+                    <div th:utext="${tour.policy}"></div>
+                </div>
+
+                <!-- Notes -->
+                <div class="glass-card p-4 mb-4" th:if="${tour.notes != null}">
+                    <h5 class="fw-bold mb-3" style="color:var(--color-ocean);">📝 Lưu ý</h5>
+                    <div th:utext="${tour.notes}"></div>
+                </div>
+
+                <!-- Reviews Section -->
+                <div class="glass-card p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold mb-0" style="color:var(--color-ocean);">💬 Đánh giá từ khách hàng
+                            <span class="small fw-normal text-muted" th:text="'(' + ${reviewCount} + ')'"></span>
+                        </h5>
+                        <a th:href="@{/review/create}" class="btn btn-outline-primary btn-sm">Viết đánh giá</a>
+                    </div>
+
+                    <!-- Empty reviews -->
+                    <div th:if="${#lists.isEmpty(reviews)}" class="text-center py-3">
+                        <p class="text-muted mb-0">Chưa có đánh giá nào cho tour này.</p>
+                    </div>
+
+                    <!-- Review list -->
+                    <div th:each="review, iterStat : ${reviews}"
+                         th:classappend="${!iterStat.last ? 'border-bottom pb-3 mb-3' : 'pb-3'}">
+                        <div class="d-flex gap-3 align-items-start">
+                            <div class="review-avatar"
+                                 th:text="${review.user.fullName != null && review.user.fullName.length() >= 2 ? review.user.fullName.substring(0, 2).toUpperCase() : '??'}">NT</div>
+                            <div>
+                                <div class="fw-bold">
+                                    <span th:text="${review.user.fullName}">Tên người đánh giá</span>
+                                    <span class="text-warning" th:each="i : ${#numbers.sequence(1, review.rating)}">★</span>
+                                    <span class="text-muted" th:each="i : ${#numbers.sequence(review.rating + 1, 5)}">★</span>
+                                </div>
+                                <small class="text-muted" th:text="${#temporals.format(review.createdAt, 'dd/MM/yyyy')}">15/03/2026</small>
+                                <p class="mb-0 mt-1 small" th:if="${review.title != null}" th:text="${review.title}"></p>
+                                <p class="mb-0 mt-1 small" th:if="${review.content != null}" th:text="${review.content}">Nội dung đánh giá</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Lịch Trình và Giá Tour -->
+            <div class="col-lg-4">
+                <div class="glass-card p-4 tour-info-card" id="departureWidget">
+                    <h5 class="fw-bold mb-1" style="color:var(--color-ocean);">Lịch Trình và Giá Tour</h5>
+                    <p class="text-muted small mb-3">Chọn Lịch Trình và Xem Giá:</p>
+
+                    <!-- No departures -->
+                    <div th:if="${#lists.isEmpty(departures)}" class="text-center py-3">
+                        <p class="text-muted mb-0">Hiện chưa có lịch khởi hành cho tour này.</p>
+                    </div>
+
+                    <!-- Departure Tabs -->
+                    <div class="departure-tabs" th:if="${!#lists.isEmpty(departures)}">
+                        <div th:each="dep, iterStat : ${departures}"
+                             th:if="${iterStat.index < 3}"
+                             class="departure-tab"
+                             th:classappend="${iterStat.index == 0 ? ' active' : ''}"
+                             th:attr="data-idx=${iterStat.index},
+                                      data-adult=${dep.adultPrice.longValue()},
+                                      data-child=${dep.childPrice.longValue()},
+                                      data-infant=${dep.infantPrice.longValue()},
+                                      data-date=${dep.departureDate},
+                                      data-dep-id=${dep.id},
+                                      data-slots=${dep.availableSlots}">
+                            <span class="tab-day"
+                                  th:text="${{'CN','T2','T3','T4','T5','T6','T7'}[#temporals.dayOfWeek(dep.departureDate) % 7]}">T2</span>
+                            <span class="tab-date"
+                                  th:text="${#temporals.format(dep.departureDate, 'dd/MM')}">25/05</span>
+                        </div>
+                        <div class="departure-tab-all" id="btnShowCalendar" th:if="${departures.size() > 3}">
+                            📅 Tất cả
+                        </div>
+                    </div>
+
+                    <!-- Calendar Popup (hidden by default) -->
+                    <div class="departure-calendar" id="departureCalendar" th:if="${!#lists.isEmpty(departures)}">
+                        <div class="calendar-header">
+                            <button class="calendar-nav" id="calPrev">‹</button>
+                            <div style="display:flex;gap:8px;">
+                                <select id="calMonth">
+                                    <option value="0">Th01</option>
+                                    <option value="1">Th02</option>
+                                    <option value="2">Th03</option>
+                                    <option value="3">Th04</option>
+                                    <option value="4">Th05</option>
+                                    <option value="5">Th06</option>
+                                    <option value="6">Th07</option>
+                                    <option value="7">Th08</option>
+                                    <option value="8">Th09</option>
+                                    <option value="9">Th10</option>
+                                    <option value="10">Th11</option>
+                                    <option value="11">Th12</option>
+                                </select>
+                                <select id="calYear">
+                                    <option value="2026">2026</option>
+                                    <option value="2027">2027</option>
+                                </select>
+                            </div>
+                            <button class="calendar-nav" id="calNext">›</button>
+                        </div>
+                        <div class="calendar-grid" id="calendarGrid">
+                            <!-- Rendered dynamically by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Quantity Counter (only if departures exist) -->
+                    <div class="qty-section" th:if="${!#lists.isEmpty(departures)}">
+                        <div class="qty-row">
+                            <div class="qty-label">
+                                <span class="qty-type">Người lớn</span>
+                                <span class="qty-age">> 10 tuổi</span>
+                            </div>
+                            <span class="qty-price" id="adultPriceLabel">x 0</span>
+                            <div class="qty-controls">
+                                <button class="qty-btn" data-target="adultQty" data-action="minus">−</button>
+                                <span class="qty-value" id="adultQty">2</span>
+                                <button class="qty-btn" data-target="adultQty" data-action="plus">+</button>
+                            </div>
+                        </div>
+                        <div class="qty-row">
+                            <div class="qty-label">
+                                <span class="qty-type">Trẻ em</span>
+                                <span class="qty-age">2 - 10 tuổi</span>
+                            </div>
+                            <span class="qty-price" id="childPriceLabel">x 0</span>
+                            <div class="qty-controls">
+                                <button class="qty-btn" data-target="childQty" data-action="minus">−</button>
+                                <span class="qty-value" id="childQty">0</span>
+                                <button class="qty-btn" data-target="childQty" data-action="plus">+</button>
+                            </div>
+                        </div>
+                        <div class="qty-row">
+                            <div class="qty-label">
+                                <span class="qty-type">Trẻ nhỏ</span>
+                                <span class="qty-age">< 2 tuổi</span>
+                            </div>
+                            <span class="qty-price" id="infantPriceLabel" style="color:#0d6efd;">Liên hệ</span>
+                            <div class="qty-controls">
+                                <button class="qty-btn" data-target="infantQty" data-action="minus">−</button>
+                                <span class="qty-value" id="infantQty">0</span>
+                                <button class="qty-btn" data-target="infantQty" data-action="plus">+</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contact note -->
+                    <div class="contact-note" th:if="${!#lists.isEmpty(departures)}">
+                        ℹ️ Liên hệ để xác nhận chỗ
+                    </div>
+
+                    <!-- Total -->
+                    <div class="total-section" th:if="${!#lists.isEmpty(departures)}">
+                        <span class="total-label">Tổng Giá Tour</span>
+                        <span class="total-price" id="totalPrice">0 đ</span>
+                    </div>
+
+                    <!-- Book button -->
+                    <a th:href="@{/booking/create(tourId=${tour.id})}"
+                       id="btnBookTour"
+                       class="btn-book-tour"
+                       th:if="${!#lists.isEmpty(departures)}">Yêu cầu đặt</a>
+
+                    <div class="mt-3 text-center">
+                        <a href="tel:19001234" class="text-muted small text-decoration-none">📞 Gọi tư vấn: 1900 1234</a>
+                    </div>
+
+                    <!-- Tour Quick Info -->
+                    <div class="mt-4 pt-3 border-top">
+                        <div class="small text-muted mb-2"><strong>Mã tour:</strong> <span th:text="${tour.code}">CODE</span></div>
+                        <div class="small text-muted mb-2"><strong>Danh mục:</strong> <span th:text="${tour.category.name}">Category</span></div>
+                        <div class="small text-muted mb-2"><strong>Khởi hành từ:</strong> <span th:text="${tour.departureLocation}">TP.HCM</span></div>
+                        <div class="small text-muted mb-2" th:if="${tour.hotelStandard != null}"><strong>Khách sạn:</strong> <span th:text="${tour.hotelStandard}">4 sao</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div th:replace="~{client/fragments/footer :: footer}"></div>
+
+<script th:inline="javascript">
+document.addEventListener('DOMContentLoaded', function() {
+    // ========== Departure data from tabs ==========
+    var departureDataList = [];
+
+    // Parse departure data from tabs
+    var tabs = document.querySelectorAll('.departure-tab');
+    tabs.forEach(function(tab) {
+        departureDataList.push({
+            adult: parseInt(tab.dataset.adult) || 0,
+            child: parseInt(tab.dataset.child) || 0,
+            infant: parseInt(tab.dataset.infant) || 0,
+            date: tab.dataset.date,
+            depId: tab.dataset.depId,
+            slots: parseInt(tab.dataset.slots) || 0
+        });
+    });
+
+    if (tabs.length === 0) return; // No departures
+
+    var currentAdultPrice = departureDataList.length > 0 ? departureDataList[0].adult : 0;
+    var currentChildPrice = departureDataList.length > 0 ? departureDataList[0].child : 0;
+    var currentInfantPrice = departureDataList.length > 0 ? departureDataList[0].infant : 0;
+
+    function formatPrice(num) {
+        return num.toLocaleString('vi-VN');
+    }
+
+    function selectTab(tab) {
+        tabs.forEach(function(t) { t.classList.remove('active'); });
+        tab.classList.add('active');
+        var calendarBtn = document.getElementById('btnShowCalendar');
+        if (calendarBtn) calendarBtn.classList.remove('active');
+
+        currentAdultPrice = parseInt(tab.dataset.adult) || 0;
+        currentChildPrice = parseInt(tab.dataset.child) || 0;
+        currentInfantPrice = parseInt(tab.dataset.infant) || 0;
+
+        updatePriceLabels();
+        updateTotal();
+    }
+
+    tabs.forEach(function(tab) {
+        tab.addEventListener('click', function() { selectTab(tab); });
+    });
+
+    // ========== Calendar Toggle ==========
+    var calendarBtn = document.getElementById('btnShowCalendar');
+    var calendar = document.getElementById('departureCalendar');
+
+    if (calendarBtn && calendar) {
+        calendarBtn.addEventListener('click', function() {
+            this.classList.toggle('active');
+            calendar.classList.toggle('show');
+            if (calendar.classList.contains('show')) {
+                renderCalendar();
+            }
+        });
+    }
+
+    // ========== Calendar Rendering ==========
+    var calMonth = document.getElementById('calMonth');
+    var calYear = document.getElementById('calYear');
+    var calendarGrid = document.getElementById('calendarGrid');
+
+    // Set initial month/year to the first departure's month
+    if (departureDataList.length > 0 && departureDataList[0].date) {
+        var firstDate = new Date(departureDataList[0].date);
+        if (calMonth) calMonth.value = firstDate.getMonth();
+        if (calYear) calYear.value = firstDate.getFullYear();
+    }
+
+    function getAllDepartureData() {
+        var allTabs = document.querySelectorAll('.departure-tab');
+        var result = [];
+        allTabs.forEach(function(tab) {
+            if (tab.dataset.date) {
+                result.push({
+                    date: tab.dataset.date,
+                    idx: tab.dataset.idx,
+                    adult: tab.dataset.adult,
+                    child: tab.dataset.child,
+                    infant: tab.dataset.infant
+                });
+            }
+        });
+        return result;
+    }
+
+    function renderCalendar() {
+        if (!calendarGrid) return;
+        var month = parseInt(calMonth.value);
+        var year = parseInt(calYear.value);
+
+        var depDates = getAllDepartureData();
+        var depDateMap = {};
+        depDates.forEach(function(d) {
+            var dt = new Date(d.date);
+            var key = dt.getFullYear() + '-' + (dt.getMonth() + 1) + '-' + dt.getDate();
+            depDateMap[key] = d;
+        });
+
+        var firstDay = new Date(year, month, 1);
+        var lastDay = new Date(year, month + 1, 0);
+        var startWeekday = (firstDay.getDay() + 6) % 7; // Monday=0
+
+        var html = '';
+        html += '<div class="cal-header">T2</div><div class="cal-header">T3</div>';
+        html += '<div class="cal-header">T4</div><div class="cal-header">T5</div>';
+        html += '<div class="cal-header">T6</div><div class="cal-header weekend">T7</div>';
+        html += '<div class="cal-header weekend">CN</div>';
+
+        // Previous month padding
+        var prevLast = new Date(year, month, 0).getDate();
+        for (var i = startWeekday - 1; i >= 0; i--) {
+            html += '<div class="cal-day">' + (prevLast - i) + '</div>';
+        }
+
+        // Current month
+        for (var d = 1; d <= lastDay.getDate(); d++) {
+            var key = year + '-' + (month + 1) + '-' + d;
+            var dep = depDateMap[key];
+            if (dep) {
+                html += '<div class="cal-day current-month has-departure" data-idx="' + dep.idx + '" data-date="' + dep.date + '">' + d + '</div>';
+            } else {
+                html += '<div class="cal-day current-month">' + d + '</div>';
+            }
+        }
+
+        // Next month padding
+        var totalCells = startWeekday + lastDay.getDate();
+        var remaining = (7 - (totalCells % 7)) % 7;
+        for (var i = 1; i <= remaining; i++) {
+            html += '<div class="cal-day">' + i + '</div>';
+        }
+
+        calendarGrid.innerHTML = html;
+
+        // Bind calendar day clicks
+        calendarGrid.querySelectorAll('.cal-day.has-departure').forEach(function(day) {
+            day.addEventListener('click', function() {
+                calendarGrid.querySelectorAll('.cal-day.has-departure').forEach(function(d) {
+                    d.classList.remove('selected');
+                });
+                this.classList.add('selected');
+                var idx = this.dataset.idx;
+                if (idx !== undefined) {
+                    var matchTab = document.querySelector('.departure-tab[data-idx="' + idx + '"]');
+                    if (matchTab) selectTab(matchTab);
+                }
+            });
+        });
+    }
+
+    if (calMonth) calMonth.addEventListener('change', renderCalendar);
+    if (calYear) calYear.addEventListener('change', renderCalendar);
+
+    var calPrev = document.getElementById('calPrev');
+    var calNext = document.getElementById('calNext');
+
+    if (calPrev) {
+        calPrev.addEventListener('click', function() {
+            var m = parseInt(calMonth.value);
+            var y = parseInt(calYear.value);
+            if (m === 0) { calMonth.value = 11; calYear.value = y - 1; }
+            else { calMonth.value = m - 1; }
+            renderCalendar();
+        });
+    }
+
+    if (calNext) {
+        calNext.addEventListener('click', function() {
+            var m = parseInt(calMonth.value);
+            var y = parseInt(calYear.value);
+            if (m === 11) { calMonth.value = 0; calYear.value = y + 1; }
+            else { calMonth.value = m + 1; }
+            renderCalendar();
+        });
+    }
+
+    // ========== Quantity Controls ==========
+    document.querySelectorAll('.qty-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var targetId = this.dataset.target;
+            var action = this.dataset.action;
+            var valueEl = document.getElementById(targetId);
+            var val = parseInt(valueEl.textContent) || 0;
+
+            if (action === 'plus') val++;
+            if (action === 'minus' && val > 0) val--;
+
+            valueEl.textContent = val;
+            updateTotal();
+        });
+    });
+
+    // ========== Price Labels & Total ==========
+    function updatePriceLabels() {
+        document.getElementById('adultPriceLabel').textContent = 'x ' + formatPrice(currentAdultPrice);
+        document.getElementById('childPriceLabel').textContent = 'x ' + formatPrice(currentChildPrice);
+        if (currentInfantPrice > 0) {
+            document.getElementById('infantPriceLabel').textContent = 'x ' + formatPrice(currentInfantPrice);
+            document.getElementById('infantPriceLabel').style.color = '#e8913a';
+        } else {
+            document.getElementById('infantPriceLabel').textContent = 'Liên hệ';
+            document.getElementById('infantPriceLabel').style.color = '#0d6efd';
+        }
+    }
+
+    function updateTotal() {
+        var adults = parseInt(document.getElementById('adultQty').textContent) || 0;
+        var children = parseInt(document.getElementById('childQty').textContent) || 0;
+        var infants = parseInt(document.getElementById('infantQty').textContent) || 0;
+
+        var total = (adults * currentAdultPrice) + (children * currentChildPrice) + (infants * currentInfantPrice);
+        document.getElementById('totalPrice').textContent = formatPrice(total) + ' đ';
+    }
+
+    // ========== Thumbnail gallery click ==========
+    window.selectThumb = function(el) {
+        document.querySelectorAll('.tour-gallery-thumb img').forEach(function(img) {
+            img.classList.remove('active');
+        });
+        el.classList.add('active');
+        var mainImg = document.getElementById('mainImage');
+        if (mainImg && el.dataset.full) {
+            mainImg.src = el.dataset.full;
+        }
+    };
+
+    // ========== Handle Book Tour Button Click ==========
+    var bookBtn = document.getElementById('btnBookTour');
+    if (bookBtn) {
+        bookBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            var url = new URL(this.href, window.location.origin);
+            var tourId = url.searchParams.get('tourId');
+            
+            // Get selected departure ID
+            var activeTab = document.querySelector('.departure-tab.active');
+            var depId = activeTab ? activeTab.dataset.depId : '';
+            
+            // Get quantity counter values
+            var adults = document.getElementById('adultQty').textContent.trim();
+            var children = document.getElementById('childQty').textContent.trim();
+            var infants = document.getElementById('infantQty').textContent.trim();
+            
+            // Redirect with all parameters
+            window.location.href = '/booking/create?tourId=' + tourId + 
+                                   '&departureId=' + depId + 
+                                   '&adultCount=' + adults + 
+                                   '&childCount=' + children + 
+                                   '&infantCount=' + infants;
+        });
+    }
+
+    // Initialize prices
+    updatePriceLabels();
+    updateTotal();
+});
+</script>
+</body>
+</html>

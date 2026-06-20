@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head th:replace="~{admin/fragments/head :: head('Nghỉ việc nhân viên', null)}"></head>
+<body>
+<div th:replace="~{admin/fragments/sidebar :: sidebar}"></div>
+<div class="admin-main">
+    <div th:replace="~{admin/fragments/header :: header}"></div>
+    <main class="flex-grow-1 p-4">
+        <div th:replace="~{admin/fragments/breadcrumb :: breadcrumb('Nghỉ việc nhân viên')}"></div>
+        <h4 class="fw-bold mb-4">⚠️ Xác Nhận Nghỉ Việc</h4>
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm rounded-4 p-5 text-center">
+                    <div class="fs-1 mb-3">⚠️</div>
+                    <h5 class="fw-bold">Xác nhận cho nhân viên nghỉ việc?</h5>
+                    <div class="card bg-light border-0 rounded-3 p-3 my-3 text-start small">
+                        <div class="mb-1"><strong>Họ tên:</strong> <span th:text="${staff.fullName}">Tên</span></div>
+                        <div class="mb-1"><strong>Email:</strong> <span th:text="${staff.email}">email</span></div>
+                        <div class="mb-1"><strong>SĐT:</strong> <span th:text="${staff.phone ?: '—'}">SĐT</span></div>
+                        <div><strong>Trạng thái hiện tại:</strong>
+                            <span th:if="${staff.status == 'ACTIVE'}" class="badge bg-success">Đang làm</span>
+                            <span th:if="${staff.status == 'INACTIVE'}" class="badge bg-secondary">Đã nghỉ</span>
+                        </div>
+                    </div>
+                    <p class="text-muted small">
+                        Nhân viên sẽ chuyển sang trạng thái <strong>INACTIVE (Đã nghỉ)</strong> và không thể đăng nhập vào hệ thống.
+                        <br>Dữ liệu lịch sử vẫn được giữ nguyên.
+                    </p>
+                    <form th:action="@{/admin/staff/delete(id=${staff.id})}" method="post" class="d-inline">
+                        <div class="d-flex gap-3 justify-content-center">
+                            <button type="submit" class="btn btn-danger px-4"
+                                    th:disabled="${staff.id == currentUserId}">Xác nhận nghỉ việc</button>
+                            <a th:href="@{/admin/staff}" class="btn btn-outline-secondary px-4">Hủy bỏ</a>
+                        </div>
+                    </form>
+                    <!-- Cảnh báo nếu là chính mình -->
+                    <div th:if="${staff.id == currentUserId}" class="alert alert-warning mt-3 small mb-0">
+                        ⚠️ Không thể cho chính tài khoản đang đăng nhập nghỉ việc.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <div th:replace="~{admin/fragments/footer :: footer}"></div>
+</div>
+</body>
+</html>

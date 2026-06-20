@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head th:replace="~{client/fragments/head :: head('500 - Lỗi hệ thống', null)}"></head>
+<body>
+<div th:replace="~{client/fragments/navbar :: navbar}"></div>
+<section class="py-5 text-center" style="min-height:60vh;display:flex;align-items:center;">
+    <div class="container">
+        <div class="display-1 fw-bold text-danger mb-3">500</div>
+        <h2 class="fw-bold mb-3">Lỗi Hệ Thống</h2>
+        <p class="text-muted mb-4">Đã xảy ra lỗi phía máy chủ. Vui lòng thử lại sau hoặc liên hệ hỗ trợ.</p>
+        <div class="d-flex justify-content-center gap-3">
+            <a th:href="@{/}" class="btn btn-primary px-4">← Về trang chủ</a>
+            <a th:href="@{/contact}" class="btn btn-outline-danger px-4">Liên hệ hỗ trợ</a>
+        </div>
+    </div>
+</section>
+<div th:replace="~{client/fragments/footer :: footer}"></div>
+</body>
+</html>

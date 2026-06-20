@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head th:replace="~{client/fragments/head :: head('Đặt tour', null)}"></head>
+<body>
+<div th:replace="~{client/fragments/header :: header}"></div>
+<div th:replace="~{client/fragments/navbar :: navbar}"></div>
+
+<section class="py-5">
+    <div class="container">
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a th:href="@{/}" class="text-decoration-none" style="color:var(--color-ocean);">Trang chủ</a></li>
+                <li class="breadcrumb-item"><a th:href="@{/tours}" class="text-decoration-none" style="color:var(--color-ocean);">Tour</a></li>
+                <li class="breadcrumb-item"><a th:href="@{/tours/detail(id=${tour.id})}" class="text-decoration-none" style="color:var(--color-ocean);" th:text="${tour.name}">Tour</a></li>
+                <li class="breadcrumb-item active">Đặt tour</li>
+            </ol>
+        </nav>
+
+        <h3 class="fw-bold mb-4">🛒 Đặt Tour Du Lịch</h3>
+
+        <!-- Error/Success messages -->
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${errorMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <form th:action="@{/booking/create}" method="post" th:object="${bookingRequest}" id="bookingForm">
+            <input type="hidden" th:field="*{tourId}">
+
+            <div class="row g-4">
+                <!-- Form đặt tour -->
+                <div class="col-lg-8">
+                    <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
+                        <h5 class="fw-bold mb-3">👤 Thông tin liên hệ</h5>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Họ và tên <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" th:field="*{contactName}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Số điện thoại <span class="text-danger">*</span></label>
+                                <input type="tel" class="form-control" th:field="*{contactPhone}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Email <span class="text-danger">*</span></label>
+                                <input type="email" class="form-control" th:field="*{contactEmail}" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
+                        <h5 class="fw-bold mb-3">📅 Thông tin chuyến đi</h5>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Ngày khởi hành <span class="text-danger">*</span></label>
+                                <select class="form-select" th:field="*{departureId}" id="departureSelect" required>
+                                    <option th:each="dep : ${departures}"
+                                            th:value="${dep.id}"
+                                            th:text="${#temporals.format(dep.departureDate, 'dd/MM/yyyy') + ' (còn ' + dep.availableSlots + ' chỗ)'}"
+                                            th:attr="data-adult=${dep.adultPrice.longValue()},data-child=${dep.childPrice != null ? dep.childPrice.longValue() : 0},data-infant=${dep.infantPrice != null ? dep.infantPrice.longValue() : 0},data-slots=${dep.availableSlots}">
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label fw-semibold">Người lớn <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" th:field="*{adultCount}" min="1" max="20" id="adultCount" required>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label fw-semibold">Trẻ em</label>
+                                <input type="number" class="form-control" th:field="*{childCount}" min="0" max="10" id="childCount">
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label fw-semibold">Trẻ nhỏ</label>
+                                <input type="number" class="form-control" th:field="*{infantCount}" min="0" max="10" id="infantCount">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Ghi chú / Yêu cầu đặc biệt</label>
+                                <textarea class="form-control" rows="3" th:field="*{specialRequests}"
+                                          placeholder="Yêu cầu đặc biệt: chế độ ăn, phòng, v.v."></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card border-0 shadow-sm rounded-4 p-4">
+                        <h5 class="fw-bold mb-3">🎫 Mã khuyến mãi</h5>
+                        <div class="input-group">
+                            <input type="text" class="form-control" th:field="*{promotionCode}" placeholder="Nhập mã khuyến mãi (nếu có)">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tóm tắt đơn đặt -->
+                <div class="col-lg-4">
+                    <div class="card border-0 shadow rounded-4 p-4 sticky-top" style="top:90px;">
+                        <h5 class="fw-bold mb-3">📋 Tóm tắt đơn đặt</h5>
+                        <div class="d-flex gap-3 mb-3">
+                            <img th:if="${!tour.images.isEmpty()}"
+                                 th:src="@{${tour.images[0].imageUrl}}"
+                                 th:alt="${tour.name}"
+                                 class="rounded-3" style="width:80px;height:60px;object-fit:cover;">
+                            <div>
+                                <h6 class="fw-bold mb-1 small" th:text="${tour.name}">Tên tour</h6>
+                                <small class="text-muted"
+                                       th:text="${tour.durationDays + 'N' + tour.durationNights + 'Đ'}">4N3Đ</small>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between small mb-2">
+                            <span id="summaryAdult">0 người lớn × 0đ</span>
+                            <strong id="summaryAdultTotal">0đ</strong>
+                        </div>
+                        <div class="d-flex justify-content-between small mb-2">
+                            <span id="summaryChild">0 trẻ em × 0đ</span>
+                            <strong id="summaryChildTotal">0đ</strong>
+                        </div>
+                        <div class="d-flex justify-content-between small mb-2">
+                            <span id="summaryInfant">0 trẻ nhỏ × 0đ</span>
+                            <strong id="summaryInfantTotal">0đ</strong>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between fw-bold fs-5 mb-3">
+                            <span>Tổng cộng</span>
+                            <span class="text-primary" id="summaryTotal">0đ</span>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-lg w-100 fw-semibold mb-2">
+                            Xác nhận đặt tour →
+                        </button>
+                        <a th:href="@{/tours/detail(id=${tour.id})}" class="btn btn-outline-secondary w-100">← Quay lại tour</a>
+                        <div class="mt-3 small text-muted text-center">
+                            🔒 Thông tin được bảo mật an toàn
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+
+<div th:replace="~{client/fragments/footer :: footer}"></div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var departureSelect = document.getElementById('departureSelect');
+    var adultInput = document.getElementById('adultCount');
+    var childInput = document.getElementById('childCount');
+    var infantInput = document.getElementById('infantCount');
+
+    function getSelectedDepartureData() {
+        var opt = departureSelect.options[departureSelect.selectedIndex];
+        return {
+            adult: parseInt(opt.dataset.adult) || 0,
+            child: parseInt(opt.dataset.child) || 0,
+            infant: parseInt(opt.dataset.infant) || 0,
+            slots: parseInt(opt.dataset.slots) || 0
+        };
+    }
+
+    function formatPrice(num) {
+        return num.toLocaleString('vi-VN');
+    }
+
+    function updateSummary() {
+        var dep = getSelectedDepartureData();
+        var adults = parseInt(adultInput.value) || 0;
+        var children = parseInt(childInput.value) || 0;
+        var infants = parseInt(infantInput.value) || 0;
+
+        var adultTotal = adults * dep.adult;
+        var childTotal = children * dep.child;
+        var infantTotal = infants * dep.infant;
+        var total = adultTotal + childTotal + infantTotal;
+
+        document.getElementById('summaryAdult').textContent =
+            adults + ' người lớn × ' + formatPrice(dep.adult) + 'đ';
+        document.getElementById('summaryAdultTotal').textContent =
+            formatPrice(adultTotal) + 'đ';
+
+        document.getElementById('summaryChild').textContent =
+            children + ' trẻ em × ' + formatPrice(dep.child) + 'đ';
+        document.getElementById('summaryChildTotal').textContent =
+            formatPrice(childTotal) + 'đ';
+
+        document.getElementById('summaryInfant').textContent =
+            infants + ' trẻ nhỏ × ' + formatPrice(dep.infant) + 'đ';
+        document.getElementById('summaryInfantTotal').textContent =
+            formatPrice(infantTotal) + 'đ';
+
+        document.getElementById('summaryTotal').textContent =
+            formatPrice(total) + 'đ';
+    }
+
+    departureSelect.addEventListener('change', updateSummary);
+    adultInput.addEventListener('input', updateSummary);
+    childInput.addEventListener('input', updateSummary);
+    infantInput.addEventListener('input', updateSummary);
+
+    // Initial calculation
+    updateSummary();
+});
+</script>
+</body>
+</html>

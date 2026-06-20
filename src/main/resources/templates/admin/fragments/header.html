@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<header th:fragment="header" class="admin-header">
+    <div class="d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center gap-3">
+            <button class="btn btn-light d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#adminSidebar">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            </button>
+            <a th:href="@{/}" class="btn btn-outline-secondary btn-sm d-none d-sm-flex align-items-center gap-2" title="Về trang chủ website">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                Trang chủ web
+            </a>
+        </div>
+        <div class="d-flex align-items-center gap-3">
+            <span class="badge rounded-pill" style="background:rgba(34,197,94,0.12);color:#4ade80;">
+                <svg width="8" height="8" viewBox="0 0 8 8" fill="#4ade80" style="margin-right:4px"><circle cx="4" cy="4" r="4"/></svg>
+                Online
+            </span>
+            <div class="dropdown">
+                <a class="d-flex align-items-center gap-2 text-decoration-none dropdown-toggle admin-user-toggle"
+                   href="#" role="button" id="adminUserDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+
+                    <!-- Avatar: ảnh thật hoặc placeholder chữ cái đầu -->
+                    <img th:if="${currentUser != null && currentUser.avatarUrl != null && !currentUser.avatarUrl.isEmpty()}"
+                         th:src="${currentUser.avatarUrl}" alt="Avatar" class="admin-avatar">
+                    <div th:unless="${currentUser != null && currentUser.avatarUrl != null && !currentUser.avatarUrl.isEmpty()}"
+                         class="admin-avatar-placeholder">
+                        <span th:text="${currentUser != null && currentUser.fullName != null ? currentUser.fullName.substring(0,1).toUpperCase() : 'A'}"></span>
+                    </div>
+
+                    <div class="d-none d-md-block text-start lh-sm">
+                        <span class="fw-semibold d-block" style="font-size:0.85rem;color:var(--text-primary)"
+                              th:text="${currentUser != null ? currentUser.fullName : 'Admin'}">Admin</span>
+                        <small style="font-size:0.72rem;color:var(--text-muted)"
+                               th:text="${currentUser != null ? currentUser.email : ''}"></small>
+                    </div>
+                </a>
+
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="adminUserDropdown">
+                    <li>
+                        <a class="dropdown-item" th:href="@{/admin/profile}">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            Hồ sơ cá nhân
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" th:href="@{/admin/change-password}">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                            Đổi mật khẩu
+                        </a>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <form th:action="@{/logout}" method="post" class="m-0">
+                            <button type="submit" class="dropdown-item text-danger">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                                Đăng xuất
+                            </button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</header>
+</html>

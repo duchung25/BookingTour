@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head th:replace="~{client/fragments/head :: head('Danh sách tour', null)}"></head>
+<body>
+<div th:replace="~{client/fragments/header :: header}"></div>
+<div th:replace="~{client/fragments/navbar :: navbar}"></div>
+
+<!-- Breadcrumb -->
+<section class="page-header-luxe text-white">
+    <div class="container">
+        <h2 class="fw-bold mb-1">Tour Du Lịch</h2>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a th:href="@{/}" class="text-decoration-none" style="color:rgba(255,255,255,0.6);">Trang chủ</a></li>
+                <li class="breadcrumb-item active" style="color:rgba(255,255,255,0.9);" aria-current="page">Tour du lịch</li>
+            </ol>
+        </nav>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4">
+            <!-- Sidebar Filters -->
+            <div class="col-lg-3">
+                <div class="glass-card p-4 sticky-top" style="top:90px;">
+                    <form th:action="@{/tours}" method="GET" id="filterForm">
+                        <h6 class="fw-bold mb-3" style="color:var(--color-ocean);">🔍 Bộ lọc tìm kiếm</h6>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Từ khóa</label>
+                            <input type="text" name="keyword" class="form-control form-control-sm"
+                                   placeholder="Nhập tên tour..." th:value="${keyword}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Điểm đến</label>
+                            <select name="destinationId" class="form-select form-select-sm">
+                                <option value="">Tất cả</option>
+                                <option th:each="d : ${destinations}"
+                                        th:value="${d.id}"
+                                        th:text="${d.name}"
+                                        th:selected="${destinationId != null && destinationId == d.id}">
+                                </option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Danh mục</label>
+                            <select name="categoryId" class="form-select form-select-sm">
+                                <option value="">Tất cả</option>
+                                <option th:each="c : ${categories}"
+                                        th:value="${c.id}"
+                                        th:text="${c.name}"
+                                        th:selected="${categoryId != null && categoryId == c.id}">
+                                </option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Thời gian</label>
+                            <select name="duration" class="form-select form-select-sm">
+                                <option value="">Tất cả</option>
+                                <option value="1-2" th:selected="${minDuration == 1 && maxDuration == 2}">1 – 2 ngày</option>
+                                <option value="3-4" th:selected="${minDuration == 3 && maxDuration == 4}">3 – 4 ngày</option>
+                                <option value="5-7" th:selected="${minDuration == 5 && maxDuration == 7}">5 – 7 ngày</option>
+                                <option value="8+" th:selected="${minDuration == 8}">Trên 7 ngày</option>
+                            </select>
+                            <input type="hidden" name="minDuration" th:value="${minDuration}">
+                            <input type="hidden" name="maxDuration" th:value="${maxDuration}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Khoảng giá (VNĐ)</label>
+                            <select name="priceRange" class="form-select form-select-sm mb-2">
+                                <option value="">Tất cả</option>
+                                <option value="0-3000000">Dưới 3 triệu</option>
+                                <option value="3000000-7000000">3 – 7 triệu</option>
+                                <option value="7000000-15000000">7 – 15 triệu</option>
+                                <option value="15000000-">Trên 15 triệu</option>
+                                <option value="custom">Tùy chỉnh...</option>
+                            </select>
+                            <div class="row g-1">
+                                <div class="col-6">
+                                    <input type="number" name="minPrice" class="form-control form-control-sm"
+                                           placeholder="Từ" min="0" step="100000" th:value="${minPrice}">
+                                </div>
+                                <div class="col-6">
+                                    <input type="number" name="maxPrice" class="form-control form-control-sm"
+                                           placeholder="Đến" min="0" step="100000" th:value="${maxPrice}">
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-sm w-100 mt-2"
+                                style="background:var(--color-ocean);color:#fff;border-radius:var(--radius-sm);">
+                            Áp dụng lọc
+                        </button>
+                        <a th:href="@{/tours}" class="btn btn-outline-secondary w-100 btn-sm mt-2"
+                           style="border-radius:var(--radius-sm);">
+                            Xóa bộ lọc
+                        </a>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Tour List -->
+            <div class="col-lg-9">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <span style="color:var(--color-text-muted);">
+                        Tìm thấy <strong style="color:var(--color-ocean);" th:text="${tourPage.totalElements}">0</strong> tour
+                    </span>
+                </div>
+
+                <!-- Empty state -->
+                <div th:if="${tourPage.content.isEmpty()}" class="text-center py-5">
+                    <div style="font-size:3rem;opacity:0.3;">🔍</div>
+                    <h5 class="mt-3" style="color:var(--color-text-muted);">Không tìm thấy tour nào</h5>
+                    <p class="text-muted">Thử thay đổi bộ lọc hoặc từ khóa tìm kiếm</p>
+                    <a th:href="@{/tours}" class="btn btn-sm" style="background:var(--color-ocean);color:#fff;">Xem tất cả tour</a>
+                </div>
+
+                <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4"
+                     th:if="${!tourPage.content.isEmpty()}">
+                    <div class="col reveal"
+                         th:each="tour, iterStat : ${tourPage.content}">
+                        <div class="card h-100 border-0 overflow-hidden tour-card-item">
+                            <!-- Image -->
+                            <div class="position-relative overflow-hidden">
+                                <img th:if="${!tour.images.isEmpty()}"
+                                     th:src="@{${tour.images[0].imageUrl}}"
+                                     class="card-img-top"
+                                     style="height:200px;object-fit:cover;"
+                                     th:alt="${tour.name}">
+                                <img th:if="${tour.images.isEmpty()}"
+                                     th:src="@{/img/tour-phuquoc.png}"
+                                     class="card-img-top"
+                                     style="height:200px;object-fit:cover;"
+                                     th:alt="${tour.name}">
+                                <span class="badge badge-duration position-absolute bottom-0 start-0 m-2"
+                                      th:text="${tour.durationDays + 'N' + tour.durationNights + 'Đ'}">
+                                </span>
+                            </div>
+                            <!-- Body -->
+                            <div class="card-body d-flex flex-column">
+                                <div class="small mb-1" style="color:var(--color-text-muted);">
+                                    <span style="color:var(--color-amber);font-weight:700;"
+                                          th:text="${tour.category.name}">Danh mục</span>
+                                </div>
+                                <h6 class="card-title fw-bold" th:text="${tour.name}">Tên tour</h6>
+                                <p class="small" style="color:var(--color-text-muted);">
+                                    📍 <span th:text="${tour.destination.name}">Điểm đến</span>
+                                </p>
+                                <div class="mt-auto d-flex justify-content-between align-items-end">
+                                    <div>
+                                        <div class="price-current"
+                                             th:text="${#numbers.formatDecimal(tour.departures.isEmpty() ? 0 : tour.departures[0].adultPrice, 0, 'COMMA', 0, 'POINT') + 'đ'}">
+                                        </div>
+                                    </div>
+                                    <a th:href="@{/tours/detail(id=${tour.id})}"
+                                       class="btn btn-view-tour">Xem →</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pagination -->
+                <div th:if="${tourPage.totalPages > 1}"
+                     th:replace="~{client/fragments/pagination :: pagination}"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div th:replace="~{client/fragments/footer :: footer}"></div>
+<script th:src="@{/js/homepage.js}"></script>
+<script>
+    // Xử lý duration filter chuyển thành min/max
+    document.getElementById('filterForm').addEventListener('submit', function(e) {
+        var durationSelect = this.querySelector('select[name="duration"]');
+        var minInput = this.querySelector('input[name="minDuration"]');
+        var maxInput = this.querySelector('input[name="maxDuration"]');
+        var val = durationSelect.value;
+
+        if (val === '1-2') { minInput.value = 1; maxInput.value = 2; }
+        else if (val === '3-4') { minInput.value = 3; maxInput.value = 4; }
+        else if (val === '5-7') { minInput.value = 5; maxInput.value = 7; }
+        else if (val === '8+') { minInput.value = 8; maxInput.value = ''; }
+        else { minInput.value = ''; maxInput.value = ''; }
+
+        // priceRange preset chỉ ghi đè min/max khi user chọn preset (không phải custom)
+        var priceSelect = this.querySelector('select[name="priceRange"]');
+        var minPriceInput = this.querySelector('input[name="minPrice"]');
+        var maxPriceInput = this.querySelector('input[name="maxPrice"]');
+        var pv = priceSelect.value;
+        if (pv && pv !== 'custom') {
+            var parts = pv.split('-');
+            minPriceInput.value = parts[0] || '';
+            maxPriceInput.value = parts[1] || '';
+        } else if (!pv) {
+            minPriceInput.value = '';
+            maxPriceInput.value = '';
+        }
+        // Không submit field priceRange (chỉ giữ logic client)
+        priceSelect.disabled = true;
+    });
+
+    // Preserve current duration + price preset on page load
+    window.addEventListener('DOMContentLoaded', function() {
+        var minDuration = document.querySelector('input[name="minDuration"]').value;
+        var maxDuration = document.querySelector('input[name="maxDuration"]').value;
+        var durationSelect = document.querySelector('select[name="duration"]');
+
+        if (minDuration === '1' && maxDuration === '2') durationSelect.value = '1-2';
+        else if (minDuration === '3' && maxDuration === '4') durationSelect.value = '3-4';
+        else if (minDuration === '5' && maxDuration === '7') durationSelect.value = '5-7';
+        else if (minDuration === '8') durationSelect.value = '8+';
+
+        // Match price preset từ current values
+        var minP = document.querySelector('input[name="minPrice"]').value;
+        var maxP = document.querySelector('input[name="maxPrice"]').value;
+        var priceSelect = document.querySelector('select[name="priceRange"]');
+        if (minP === '0' && maxP === '3000000') priceSelect.value = '0-3000000';
+        else if (minP === '3000000' && maxP === '7000000') priceSelect.value = '3000000-7000000';
+        else if (minP === '7000000' && maxP === '15000000') priceSelect.value = '7000000-15000000';
+        else if (minP === '15000000' && maxP === '') priceSelect.value = '15000000-';
+        else if (minP || maxP) priceSelect.value = 'custom';
+    });
+</script>
+</body>
+</html>

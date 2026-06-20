@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head th:replace="~{client/fragments/head :: head('Hủy đơn đặt tour', null)}"></head>
+<body>
+<div th:replace="~{client/fragments/header :: header}"></div>
+<div th:replace="~{client/fragments/navbar :: navbar}"></div>
+<section class="py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-7">
+                <div class="card border-0 shadow-sm rounded-4 p-5 text-center">
+                    <div class="fs-1 mb-3">⚠️</div>
+                    <h3 class="fw-bold mb-3">Xác Nhận Hủy Đơn Đặt Tour</h3>
+                    <p class="text-muted mb-4">Bạn có chắc chắn muốn hủy đơn đặt tour này? Hành động này không thể hoàn tác.</p>
+
+                    <!-- Error message -->
+                    <div th:if="${errorMessage}" class="alert alert-danger text-start mb-3">
+                        <span th:text="${errorMessage}"></span>
+                    </div>
+
+                    <div class="card bg-light border-0 rounded-3 p-3 text-start mb-4">
+                        <div class="row small">
+                            <div class="col-6 mb-2"><strong>Mã đơn:</strong> <span th:text="${booking.bookingCode}">BK-XXX</span></div>
+                            <div class="col-6 mb-2"><strong>Tour:</strong> <span th:text="${booking.tourDeparture.tour.name}">Tên tour</span></div>
+                            <div class="col-6 mb-2"><strong>Ngày khởi hành:</strong> <span th:text="${#temporals.format(booking.tourDeparture.departureDate, 'dd/MM/yyyy')}">20/04/2026</span></div>
+                            <div class="col-6 mb-2"><strong>Số khách:</strong> <span th:text="${booking.totalPeople + ' người'}">2 người</span></div>
+                            <div class="col-6"><strong>Tổng tiền:</strong>
+                                <span class="text-primary fw-bold"
+                                      th:text="${#numbers.formatDecimal(booking.finalAmount, 0, 'COMMA', 0, 'POINT') + 'đ'}">0đ</span>
+                            </div>
+                            <div class="col-6"><strong>Trạng thái:</strong>
+                                <span th:if="${booking.bookingStatus == 'PENDING'}" class="badge bg-warning text-dark">Chờ xác nhận</span>
+                                <span th:if="${booking.bookingStatus == 'CONFIRMED'}" class="badge bg-success">Đã xác nhận</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-warning small text-start">
+                        <strong>Chính sách hủy:</strong>
+                        <ul class="mb-0 mt-1">
+                            <li>Hủy trước 7 ngày khởi hành: hoàn 100%</li>
+                            <li>Hủy trước 3-7 ngày: hoàn 50%</li>
+                            <li>Hủy trong 3 ngày: không hoàn tiền</li>
+                        </ul>
+                    </div>
+
+                    <form th:action="@{/booking/cancel}" method="post">
+                        <input type="hidden" name="id" th:value="${booking.id}">
+                        <div class="mb-3 text-start">
+                            <label class="form-label fw-semibold">Lý do hủy</label>
+                            <select class="form-select" name="reason">
+                                <option value="Thay đổi kế hoạch">Thay đổi kế hoạch</option>
+                                <option value="Lý do cá nhân">Lý do cá nhân</option>
+                                <option value="Đặt nhầm">Đặt nhầm</option>
+                                <option value="Tìm được giá tốt hơn">Tìm được giá tốt hơn</option>
+                                <option value="Khác">Khác</option>
+                            </select>
+                        </div>
+                        <div class="d-flex gap-3 justify-content-center">
+                            <button type="submit" class="btn btn-danger btn-lg px-4">Xác nhận hủy</button>
+                            <a th:href="@{/booking/history}" class="btn btn-outline-secondary btn-lg px-4">Quay lại</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div th:replace="~{client/fragments/footer :: footer}"></div>
+</body>
+</html>

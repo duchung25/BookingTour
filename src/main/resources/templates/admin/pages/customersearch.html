@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head th:replace="~{admin/fragments/head :: head('Tìm kiếm khách hàng', null)}"></head>
+<body>
+<div th:replace="~{admin/fragments/sidebar :: sidebar}"></div>
+<div class="admin-main">
+    <div th:replace="~{admin/fragments/header :: header}"></div>
+    <main class="flex-grow-1 p-4">
+        <div th:replace="~{admin/fragments/breadcrumb :: breadcrumb('Chi tiết khách hàng')}"></div>
+        <h4 class="fw-bold mb-4">🔍 Chi Tiết Khách Hàng</h4>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card admin-card text-center p-4">
+                    <div class="mx-auto mb-3" style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#0d6efd,#6610f2);display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.5rem;font-weight:700;">NL</div>
+                    <h5 class="fw-bold">Nguyễn Thị Lan</h5>
+                    <p class="text-muted small">lan.nguyen@email.com</p>
+                    <span class="badge bg-success rounded-pill mb-3">Hoạt động</span>
+                    <hr>
+                    <div class="text-start small">
+                        <div class="mb-2"><strong>SĐT:</strong> 0912 345 678</div>
+                        <div class="mb-2"><strong>Ngày ĐK:</strong> 15/01/2026</div>
+                        <div class="mb-2"><strong>Tổng đơn:</strong> 5</div>
+                        <div><strong>Tổng chi:</strong> 32.500.000đ</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="card admin-card">
+                    <div class="card-header"><h6 class="fw-bold mb-0">📋 Lịch sử đặt tour</h6></div>
+                    <div class="card-body p-0">
+                        <table class="table table-admin table-hover mb-0">
+                            <thead><tr><th>Mã đơn</th><th>Tour</th><th>Ngày đặt</th><th>Tổng tiền</th><th>Trạng thái</th></tr></thead>
+                            <tbody>
+                                <tr><td>#BK1257</td><td>Phú Quốc 4N3Đ</td><td>02/04/2026</td><td>12.970.000đ</td><td><span class="badge bg-warning text-dark rounded-pill">Chờ xác nhận</span></td></tr>
+                                <tr><td>#BK1200</td><td>Đà Nẵng 3N2Đ</td><td>15/03/2026</td><td>6.580.000đ</td><td><span class="badge bg-success rounded-pill">Đã hoàn thành</span></td></tr>
+                                <tr><td>#BK1150</td><td>Sapa 3N2Đ</td><td>10/02/2026</td><td>7.380.000đ</td><td><span class="badge bg-success rounded-pill">Đã hoàn thành</span></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <div th:replace="~{admin/fragments/footer :: footer}"></div>
+</div>
+</body>
+</html>

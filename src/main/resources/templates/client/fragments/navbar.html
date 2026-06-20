@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<nav th:fragment="navbar" class="navbar navbar-expand-lg navbar-traveler sticky-top">
+    <div class="container">
+        <a class="navbar-brand d-flex align-items-center gap-1" th:href="@{/}">
+            <span class="navbar-brand-text"><span class="brand-primary">Tra</span><span class="brand-accent">veler</span></span>
+        </a>
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#clientNavbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="clientNavbar">
+            <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/}">Trang chủ</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/tours}">Tour du lịch</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/about}">Giới thiệu</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/contact}">Liên hệ</a>
+                </li>
+            </ul>
+
+            <!-- ===== CHƯA ĐĂNG NHẬP ===== -->
+            <div sec:authorize="!isAuthenticated()" class="d-flex align-items-center gap-2">
+                <a th:href="@{/login}" class="btn btn-nav-login">Đăng nhập</a>
+                <a th:href="@{/register}" class="btn btn-nav-register">Đăng ký</a>
+            </div>
+
+            <!-- ===== ĐÃ ĐĂNG NHẬP ===== -->
+            <div sec:authorize="isAuthenticated()" class="dropdown">
+                <a class="d-flex align-items-center gap-2 text-decoration-none dropdown-toggle user-menu-toggle"
+                   href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+
+                    <!-- Avatar: ảnh thật hoặc placeholder chữ cái đầu -->
+                    <img th:if="${currentUser != null && currentUser.avatarUrl != null && !currentUser.avatarUrl.isEmpty()}"
+                         th:src="${currentUser.avatarUrl}" alt="Avatar" class="user-avatar">
+                    <div th:unless="${currentUser != null && currentUser.avatarUrl != null && !currentUser.avatarUrl.isEmpty()}"
+                         class="user-avatar-placeholder">
+                        <span th:text="${currentUser != null && currentUser.fullName != null ? currentUser.fullName.substring(0,1).toUpperCase() : '?'}"></span>
+                    </div>
+
+                    <span class="fw-semibold text-dark d-none d-md-inline"
+                          th:text="${currentUser != null ? currentUser.fullName : 'User'}">User</span>
+                </a>
+
+                <ul class="dropdown-menu dropdown-menu-end shadow-lg" aria-labelledby="userDropdown">
+                    <!-- Thông tin user (hiển thị email nhỏ) -->
+                    <li class="px-3 py-2">
+                        <div class="fw-bold" th:text="${currentUser != null ? currentUser.fullName : ''}"></div>
+                        <small class="text-muted" th:text="${currentUser != null ? currentUser.email : ''}"></small>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+
+                    <!-- Menu items -->
+                    <li>
+                        <a class="dropdown-item" th:href="@{/profile}">
+                            <span class="me-2">👤</span> Hồ sơ cá nhân
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" th:href="@{/booking/history}">
+                            <span class="me-2">📋</span> Đơn đặt tour
+                        </a>
+                    </li>
+
+                    <li><hr class="dropdown-divider"></li>
+
+                    <!-- Đăng xuất: PHẢI dùng POST + CSRF -->
+                    <li>
+                        <form th:action="@{/logout}" method="post" class="m-0">
+                            <button type="submit" class="dropdown-item text-danger">
+                                <span class="me-2">🚪</span> Đăng xuất
+                            </button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+</nav>
+</html>

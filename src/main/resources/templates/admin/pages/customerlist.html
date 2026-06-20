@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head th:replace="~{admin/fragments/head :: head('Danh sách Khách hàng', null)}"></head>
+<body>
+<div th:replace="~{admin/fragments/sidebar :: sidebar}"></div>
+<div class="admin-main">
+    <div th:replace="~{admin/fragments/header :: header}"></div>
+    <main class="flex-grow-1 p-4">
+        <div th:replace="~{admin/fragments/breadcrumb :: breadcrumb('Khách hàng')}"></div>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="fw-bold mb-0">👥 Danh Sách Khách Hàng</h4>
+            <a th:href="@{/admin/customers/create}" class="btn btn-primary">➕ Thêm khách hàng</a>
+        </div>
+
+        <!-- Flash Messages -->
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${successMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${errorMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <!-- Search -->
+        <div class="card admin-card mb-4">
+            <div class="card-body">
+                <form th:action="@{/admin/customers}" method="get">
+                    <div class="row g-2 align-items-end">
+                        <div class="col-md-5">
+                            <input type="text" name="keyword" th:value="${keyword}"
+                                   class="form-control form-control-sm" placeholder="Tìm theo tên, email, SĐT...">
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-primary btn-sm w-100">Tìm kiếm</button>
+                        </div>
+                        <div class="col-md-2">
+                            <a th:href="@{/admin/customers}" class="btn btn-outline-secondary btn-sm w-100">Đặt lại</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Table -->
+        <div class="card admin-card">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-admin table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Họ tên</th>
+                                <th>Email</th>
+                                <th>Điện thoại</th>
+                                <th>Ngày đăng ký</th>
+                                <th>Trạng thái</th>
+                                <th>Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:if="${customerPage.content.isEmpty()}">
+                                <td colspan="7" class="text-center text-muted py-4">Không tìm thấy khách hàng nào.</td>
+                            </tr>
+                            <tr th:each="cust, stat : ${customerPage.content}">
+                                <td th:text="${customerPage.number * customerPage.size + stat.index + 1}">1</td>
+                                <td class="fw-semibold" th:text="${cust.fullName}">Tên</td>
+                                <td th:text="${cust.email}">Email</td>
+                                <td th:text="${cust.phone != null ? cust.phone : '—'}">SĐT</td>
+                                <td th:text="${#temporals.format(cust.createdAt, 'dd/MM/yyyy')}">01/01/2026</td>
+                                <td>
+                                    <span th:if="${cust.status == 'ACTIVE'}" class="badge bg-success rounded-pill">Hoạt động</span>
+                                    <span th:if="${cust.status == 'BANNED'}" class="badge bg-danger rounded-pill">Đã khóa</span>
+                                    <span th:if="${cust.status == 'INACTIVE'}" class="badge bg-secondary rounded-pill">Vô hiệu</span>
+                                </td>
+                                <td>
+                                    <a th:href="@{/admin/customers/status(id=${cust.id})}"
+                                       class="btn btn-sm"
+                                       th:classappend="${cust.status == 'ACTIVE'} ? 'btn-outline-danger' : 'btn-outline-success'"
+                                       th:text="${cust.status == 'ACTIVE'} ? 'Khóa' : 'Mở khóa'">
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <nav th:if="${customerPage.totalPages > 1}" aria-label="Phân trang" class="mt-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <span class="text-muted small"
+                      th:text="'Hiển thị ' + (${customerPage.number * customerPage.size + 1}) + '-' + (${customerPage.number * customerPage.size + customerPage.numberOfElements}) + ' của ' + ${customerPage.totalElements} + ' kết quả'">
+                </span>
+                <ul class="pagination pagination-sm mb-0">
+                    <li class="page-item" th:classappend="${customerPage.first} ? 'disabled'">
+                        <a class="page-link" th:href="@{/admin/customers(keyword=${keyword}, page=${customerPage.number - 1})}">←</a>
+                    </li>
+                    <li th:each="i : ${#numbers.sequence(0, customerPage.totalPages - 1)}"
+                        class="page-item" th:classappend="${i == customerPage.number} ? 'active'">
+                        <a class="page-link" th:href="@{/admin/customers(keyword=${keyword}, page=${i})}" th:text="${i + 1}">1</a>
+                    </li>
+                    <li class="page-item" th:classappend="${customerPage.last} ? 'disabled'">
+                        <a class="page-link" th:href="@{/admin/customers(keyword=${keyword}, page=${customerPage.number + 1})}">→</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </main>
+    <div th:replace="~{admin/fragments/footer :: footer}"></div>
+</div>
+</body>
+</html>

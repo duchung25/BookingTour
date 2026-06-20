@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head th:replace="~{client/fragments/head :: head('Giới thiệu', null)}"></head>
+<body>
+<div th:replace="~{client/fragments/header :: header}"></div>
+<div th:replace="~{client/fragments/navbar :: navbar}"></div>
+<section class="page-header-luxe text-white text-center" style="padding:60px 0 55px;">
+    <div class="container position-relative" style="z-index:1;">
+        <h1 class="fw-bold display-5" style="color:#fff;">Về Traveler</h1>
+        <p class="lead" style="color:rgba(255,255,255,0.7);">Nền tảng đặt tour du lịch hàng đầu Việt Nam</p>
+    </div>
+</section>
+<section class="py-5">
+    <div class="container">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6 reveal">
+                <span class="section-tag">🏢 Câu chuyện</span>
+                <h2 class="section-title mt-2 mb-3">15 Năm Đồng Hành Cùng Triệu Du Khách</h2>
+                <p style="color:var(--color-text-muted);">Traveler được thành lập năm 2011 với sứ mệnh mang đến trải nghiệm du lịch tốt nhất cho người Việt. Trải qua 15 năm phát triển, chúng tôi đã phục vụ hơn 500.000 khách hàng với hơn 1.200 tour du lịch đa dạng.</p>
+                <p style="color:var(--color-text-muted);">Chúng tôi cam kết mang đến dịch vụ 5 sao, giá cả minh bạch, và lịch trình được thiết kế tỉ mỉ để mỗi chuyến đi trở thành một kỷ niệm đáng nhớ.</p>
+            </div>
+            <div class="col-lg-6 reveal reveal-delay-2">
+                <img th:src="@{/img/hero-bg.png}" class="img-fluid shadow" alt="About" style="border-radius:var(--radius-xl);">
+            </div>
+        </div>
+        <div class="row g-4 mt-5 text-center">
+            <div class="col-md-3 reveal reveal-delay-1">
+                <div class="glass-card p-4">
+                    <div class="fs-2 mb-2">🗺️</div>
+                    <h3 class="fw-bold" style="color:var(--color-amber);">1200+</h3>
+                    <p class="mb-0" style="color:var(--color-text-muted);">Tour du lịch</p>
+                </div>
+            </div>
+            <div class="col-md-3 reveal reveal-delay-2">
+                <div class="glass-card p-4">
+                    <div class="fs-2 mb-2">👥</div>
+                    <h3 class="fw-bold" style="color:var(--color-amber);">500K+</h3>
+                    <p class="mb-0" style="color:var(--color-text-muted);">Khách hài lòng</p>
+                </div>
+            </div>
+            <div class="col-md-3 reveal reveal-delay-3">
+                <div class="glass-card p-4">
+                    <div class="fs-2 mb-2">📍</div>
+                    <h3 class="fw-bold" style="color:var(--color-amber);">50+</h3>
+                    <p class="mb-0" style="color:var(--color-text-muted);">Điểm đến</p>
+                </div>
+            </div>
+            <div class="col-md-3 reveal reveal-delay-4">
+                <div class="glass-card p-4">
+                    <div class="fs-2 mb-2">⭐</div>
+                    <h3 class="fw-bold" style="color:var(--color-amber);">4.8</h3>
+                    <p class="mb-0" style="color:var(--color-text-muted);">Đánh giá TB</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div th:replace="~{client/fragments/footer :: footer}"></div>
+<script th:src="@{/js/homepage.js}"></script>
+</body>
+</html>
