@@ -7,10 +7,10 @@
                 <h5 class="footer-brand mb-3"><span style="color:var(--color-amber);">Tra</span><span class="text-white">veler</span></h5>
                 <p class="small" style="color:rgba(255,255,255,0.55);">Traveler — Nền tảng đặt tour du lịch, vé máy bay, khách sạn trực tuyến hàng đầu Việt Nam. Đồng hành cùng hàng triệu du khách mỗi năm.</p>
                 <div class="d-flex gap-2 mt-3">
-                    <a href="#" class="btn btn-outline-light btn-sm rounded-circle" style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-color:rgba(255,255,255,0.2);">📘</a>
-                    <a href="#" class="btn btn-outline-light btn-sm rounded-circle" style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-color:rgba(255,255,255,0.2);">📷</a>
-                    <a href="#" class="btn btn-outline-light btn-sm rounded-circle" style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-color:rgba(255,255,255,0.2);">▶️</a>
-                    <a href="#" class="btn btn-outline-light btn-sm rounded-circle" style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-color:rgba(255,255,255,0.2);">💬</a>
+                    <a href="#" class="btn btn-outline-light btn-sm rounded-circle" style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-color:rgba(255,255,255,0.2);"><i class="fa-solid fa-book-atlas"></i></a>
+                    <a href="#" class="btn btn-outline-light btn-sm rounded-circle" style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-color:rgba(255,255,255,0.2);"><i class="fa-regular fa-camera"></i></a>
+                    <a href="#" class="btn btn-outline-light btn-sm rounded-circle" style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-color:rgba(255,255,255,0.2);"><i class="fa-solid fa-play"></i></a>
+                    <a href="#" class="btn btn-outline-light btn-sm rounded-circle" style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-color:rgba(255,255,255,0.2);"><i class="fa-brands fa-rocketchat"></i></a>
                 </div>
             </div>
             <div class="col-lg-2 col-md-6">
@@ -35,10 +35,10 @@
             <div class="col-lg-4 col-md-6">
                 <h6 class="fw-bold mb-3" style="color:var(--color-amber-light);">Liên hệ</h6>
                 <ul class="list-unstyled small">
-                    <li class="mb-2" style="color:rgba(255,255,255,0.55);">📞 Hotline: <strong class="text-white">1900 1234</strong></li>
-                    <li class="mb-2" style="color:rgba(255,255,255,0.55);">✉️ info@traveler.vn</li>
-                    <li class="mb-2" style="color:rgba(255,255,255,0.55);">📍 Hà Nội, Việt Nam</li>
-                    <li class="mb-2" style="color:rgba(255,255,255,0.55);">🕐 Hằng ngày: 8:00 – 22:00</li>
+                    <li class="mb-2" style="color:rgba(255,255,255,0.55);"><i class="fa-solid fa-phone"></i> Hotline: <strong class="text-white">1900 1234</strong></li>
+                    <li class="mb-2" style="color:rgba(255,255,255,0.55);"><i class="fa-brands fa-square-facebook"></i> info@traveler.vn</li>
+                    <li class="mb-2" style="color:rgba(255,255,255,0.55);"><i class="fa-solid fa-map-pin"></i> Hà Nội, Việt Nam</li>
+                    <li class="mb-2" style="color:rgba(255,255,255,0.55);"><i class="fa-regular fa-clock"></i> Hằng ngày: 8:00 – 22:00</li>
                 </ul>
             </div>
         </div>
@@ -53,24 +53,22 @@
         </div> 
     </div>
 
-    <!-- ==================== FLOATING WIDGET ==================== -->
-    <!-- Nút Lên đầu -->
     <button id="btnScrollTop" class="floating-btn floating-btn-dark" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Lên đầu">
-        Lên đầu <span class="floating-icon">⌃</span>
+        Lên đầu <span class="floating-icon"><i class="fa-solid fa-arrow-up"></i></span>
     </button>
 
     <!-- Nút Hỗ trợ -->
     <button id="btnSupport" class="floating-btn floating-btn-red" onclick="toggleSupportMenu()" title="Hỗ trợ">
-        Hỗ trợ <span class="floating-icon">🎧</span>
+        Hỗ trợ <span class="floating-icon"><i class="fa-solid fa-headset"></i></span>
     </button>
 
     <!-- Menu Hỗ trợ (Liên hệ / Trợ lý ảo) -->
     <div id="supportMenu" class="support-menu">
         <a th:href="@{/contact}" class="support-menu-item">
-            <span class="support-menu-icon">📞</span> Liên hệ
+            <span class="support-menu-icon"><i class="fa-solid fa-phone"></i></span> Liên hệ
         </a>
         <button class="support-menu-item" onclick="openChatbot()">
-            <span class="support-menu-icon">🤖</span> Trợ lý ảo
+            <span class="support-menu-icon"><i class="fa-solid fa-robot"></i></span> Trợ lý ảo
         </button>
     </div>
 
@@ -78,7 +76,7 @@
     <div id="chatbotPopup" class="chatbot-popup">
         <div class="chatbot-header">
             <div class="chatbot-header-info">
-                <span class="chatbot-avatar">🤖</span>
+                <span class="chatbot-avatar"><i class="fa-solid fa-robot"></i></span>
                 <div>
                     <div class="chatbot-title">Trợ lý Traveler</div>
                     <div class="chatbot-status">Trực tuyến</div>
@@ -88,12 +86,12 @@
         </div>
         <div id="chatMessages" class="chatbot-messages">
             <div class="chat-msg chat-bot">
-                <div class="chat-bubble">Xin chào! 👋 Tôi là trợ lý ảo của <strong>Traveler</strong>. Tôi có thể giúp gì cho bạn hôm nay?</div>
+                <div class="chat-bubble">Xin chào! <i class="fa-regular fa-hand"></i> Tôi là trợ lý ảo của <strong>Traveler</strong>. Tôi có thể giúp gì cho bạn hôm nay?</div>
             </div>
         </div>
         <div class="chatbot-input-area">
             <input type="text" id="chatInput" class="chatbot-input" placeholder="Nhập tin nhắn..." autocomplete="off">
-            <button id="chatSendBtn" class="chatbot-send" onclick="sendChatMessage()" title="Gửi">➤</button>
+            <button id="chatSendBtn" class="chatbot-send" onclick="sendChatMessage()" title="Gửi"><i class="fa-solid fa-paper-plane"></i></button>
         </div>
     </div>
 
