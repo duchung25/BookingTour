@@ -19,29 +19,7 @@ public class AdminAuthController {
         if (isAdmin(authentication)) {
             return "redirect:/admin/dashboard";
         }
-        return "redirect:/admin/login";
-    }
-
-    @GetMapping("/login")
-    public String login(Authentication authentication,
-            @RequestParam(required = false) String error,
-            @RequestParam(required = false) String logout,
-            HttpSession session,
-            Model model) {
-
-        // Đã đăng nhập với role ADMIN thì không cần vào lại trang login
-        if (isAdmin(authentication)) {
-            return "redirect:/admin/dashboard";
-        }
-
-        // Đánh dấu nguồn đăng nhập để SuccessHandler biết
-        session.setAttribute("loginSource", "admin");
-
-        if (error != null)
-            model.addAttribute("errorMessage", "Email hoặc mật khẩu không đúng");
-        if (logout != null)
-            model.addAttribute("logoutMessage", "Đã đăng xuất thành công");
-        return "admin/pages/login";
+        return "redirect:/login";
     }
 
     private boolean isAdmin(Authentication authentication) {

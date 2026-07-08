@@ -7,7 +7,7 @@
     <div th:replace="~{admin/fragments/header :: header}"></div>
     <main class="flex-grow-1 p-4">
         <div th:replace="~{admin/fragments/breadcrumb :: breadcrumb('Xóa đơn đặt')}"></div>
-        <h4 class="fw-bold mb-4">🗑️ Xóa Đơn Đặt Tour</h4>
+        <h4 class="fw-bold mb-4">🗑️ Xóa đơn đặt Tour</h4>
         <div class="row justify-content-center">
             <div class="col-md-6">
                 <div class="card border-0 shadow-sm rounded-4 p-5 text-center">
@@ -25,7 +25,7 @@
                     </div>
                     <div class="alert alert-warning small">
                         ⚠️ Đơn đặt sẽ được chuyển sang trạng thái <strong>DELETED</strong> (xóa mềm).
-                        Chỉ đơn đã <strong>HỦY</strong> mới có thể xóa.
+                        Chỉ đơn đã <strong>Hủy</strong> mới có thể xóa.
                     </div>
                     <form th:action="@{/admin/bookings/delete(id=${booking.id})}" method="post">
                         <div class="d-flex gap-3 justify-content-center">

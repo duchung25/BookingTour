@@ -14,7 +14,7 @@
     <div class="container">
         <div class="text-center mb-5 reveal">
             <span class="section-tag"><i class="fa-solid fa-fire" style="color: orange;"></i> Nổi bật</span>
-            <h2 class="section-title">Tour Du Lịch Được Yêu Thích Nhất</h2>
+            <h2 class="section-title">Tour du lịch được yêu thích nhất</h2>
             <p class="section-subtitle">Khám phá các tour du lịch được đánh giá cao nhất từ hàng nghìn du khách</p>
         </div>
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
@@ -31,7 +31,7 @@
                              th:src="@{/img/tour-phuquoc.png}"
                              class="card-img-top" th:alt="${tour.name}" style="height:220px;object-fit:cover;">
                         <span class="badge badge-hot position-absolute top-0 end-0 m-2"
-                              th:if="${iterStat.index == 0 || iterStat.index == 3}">HOT</span>
+                              th:if="${iterStat.index == 0 || iterStat.index == 3}">Hot</span>
                         <span class="badge badge-new position-absolute top-0 end-0 m-2"
                               th:if="${iterStat.index == 2}">Mới</span>
                         <span class="badge badge-duration position-absolute bottom-0 start-0 m-2"
@@ -77,7 +77,7 @@
     <div class="container">
         <div class="text-center mb-5 reveal">
             <span class="section-tag"> <i class="fa-solid fa-map-pin" style="color: red;"></i> Điểm đến</span>
-            <h2 class="section-title">Điểm Đến Phổ Biến Nhất</h2>
+            <h2 class="section-title">Điểm đến phổ biến nhất</h2>
             <p class="section-subtitle">Những địa danh du lịch hấp dẫn nhất Việt Nam đang chờ bạn khám phá</p>
         </div>
         <div class="row g-4">
@@ -106,7 +106,7 @@
     <div class="container">
         <div class="text-center mb-5 reveal">
             <span class="section-tag"><i class="fa-solid fa-gem" style="color: rgba(0, 157, 255, 0.741);"></i> Vì sao chọn chúng tôi</span>
-            <h2 class="section-title">Traveler — Đối Tác Du Lịch Đáng Tin Cậy</h2>
+            <h2 class="section-title">Traveler — Đối tác du lịch đáng tin cậy</h2>
         </div>
         <div class="row g-4">
             <div class="col-md-6 col-lg-3 reveal reveal-delay-1">
@@ -119,21 +119,21 @@
             <div class="col-md-6 col-lg-3 reveal reveal-delay-2">
                 <div class="category-card h-100">
                     <div class="category-icon"><i class="fa-solid fa-star" style="color: gold;"></i></div>
-                    <h6 class="fw-bold" style="color:var(--color-ocean);">Dịch Vụ 5 Sao</h6>
+                    <h6 class="fw-bold" style="color:var(--color-ocean);">Dịch vụ 5 sao</h6>
                     <p class="small mb-0" style="color:var(--color-text-muted);">Đội ngũ chuyên nghiệp, hỗ trợ 24/7 trong suốt hành trình</p>
                 </div>
             </div>
             <div class="col-md-6 col-lg-3 reveal reveal-delay-3">
                 <div class="category-card h-100">
                     <div class="category-icon"><i class="fa-solid fa-lock" style="color: rgb(36, 105, 210);"></i></div>
-                    <h6 class="fw-bold" style="color:var(--color-ocean);">Thanh Toán An Toàn</h6>
+                    <h6 class="fw-bold" style="color:var(--color-ocean);">Thanh toán an toàn</h6>
                     <p class="small mb-0" style="color:var(--color-text-muted);">Bảo mật thông tin thanh toán với công nghệ mã hóa tiên tiến</p>
                 </div>
             </div>
             <div class="col-md-6 col-lg-3 reveal reveal-delay-4">
                 <div class="category-card h-100">
                     <div class="category-icon"><i class="fa-solid fa-bullseye" style="color: rgba(255, 0, 0, 0.675);"></i></div>
-                    <h6 class="fw-bold" style="color:var(--color-ocean);">Lịch Trình Tối Ưu</h6>
+                    <h6 class="fw-bold" style="color:var(--color-ocean);">Lịch trình tối ưu</h6>
                     <p class="small mb-0" style="color:var(--color-text-muted);">Được thiết kế bởi chuyên gia, tối ưu trải nghiệm mỗi phút</p>
                 </div>
             </div>
@@ -146,7 +146,7 @@
     <div class="container">
         <div class="text-center mb-5 reveal">
             <span class="section-tag">🎉 Khuyến mãi</span>
-            <h2 class="section-title">Tour Giảm Giá Đặc Biệt</h2>
+            <h2 class="section-title">Tour giảm giá đặc biệt</h2>
             <p class="section-subtitle">Cơ hội vàng để khám phá Việt Nam với mức giá ưu đãi nhất năm</p>
         </div>
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
@@ -187,7 +187,7 @@
     <div class="container">
         <div class="text-center mb-5 reveal">
             <span class="section-tag"><i class="fa-solid fa-comments" style="color: var(--color-ocean);"></i> Phản hồi</span>
-            <h2 class="section-title">Khách Hàng Nói Gì Về Chúng Tôi</h2>
+            <h2 class="section-title">Khách hàng nói gì chúng tôi</h2>
         </div>
         <div class="row g-4">
             <div class="col-md-4 reveal" th:each="review, iterStat : ${reviews}"
@@ -224,7 +224,7 @@
 <!-- CTA -->
 <section class="cta-section text-center">
     <div class="container py-4 position-relative" style="z-index:1;">
-        <h2 class="fw-bold display-6 mb-3 reveal">Bạn Đã Sẵn Sàng Lên Đường?</h2>
+        <h2 class="fw-bold display-6 mb-3 reveal">Bạn đã sẵn sáng lên đường?</h2>
         <p class="lead opacity-75 mb-4 reveal reveal-delay-1">Đăng ký ngay để nhận ưu đãi đặc biệt và cùng Traveler khám phá thế giới</p>
         <div class="d-flex justify-content-center gap-3 reveal reveal-delay-2">
             <a th:href="@{/register}" class="btn btn-primary-luxe btn-lg px-5">Đăng ký ngay</a>

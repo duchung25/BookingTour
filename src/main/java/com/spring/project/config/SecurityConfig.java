@@ -44,15 +44,15 @@ public class SecurityConfig {
                 .requestMatchers(
                     "/", "/home", "/index",
                     "/login", "/register", "/register/verify", "/register/resend-otp",
-                    // "/admin", "/admin/", "/admin/login",
                     "/forgot-password",
                     "/tours", "/tours/**",
                     "/about", "/contact",
                     "/css/**", "/js/**", "/images/**", "/fonts/**", "/assets/**", "/uploads/**",
                     "/error/**"
                 ).permitAll()
-
+                .requestMatchers("/booking/**", "/review/**", "/payment/**").hasAnyRole("USER")
                 .requestMatchers("/admin/**").hasRole("ADMIN")
+
 
                 .anyRequest().authenticated()
             )
